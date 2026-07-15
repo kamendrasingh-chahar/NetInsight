@@ -1,0 +1,57 @@
+body {
+
+    min-height: 100vh;
+
+    background: linear-gradient(180deg, #f8fafc 0%, #eef4ff 100%);
+
+    font-family: Arial, Helvetica, sans-serif;
+
+}
+
+.hero {
+
+    max-width: 850px;
+
+    margin: auto;
+
+    padding-top: 120px;
+
+    text-align: center;
+
+}
+
+.description {
+
+    color: #6c757d;
+
+    margin-top: 20px;
+
+    margin-bottom: 40px;
+
+}
+
+.input-group {
+
+    box-shadow: 0 8px 20px rgba(0,0,0,.08);
+
+}
+
+.navbar-brand {
+
+    font-size: 1.5rem;
+
+}
+
+.nav-link {
+
+    color: #555 !important;
+
+    margin-left: 20px;
+
+}
+
+.nav-link:hover {
+
+    color: #0d6efd !important;
+
+}

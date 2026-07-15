@@ -8,7 +8,15 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>NetInsight</title>
+    <title>
+        {% block title %}
+        NetInsight
+        {% endblock %}
+    </title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+        rel="stylesheet">
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/style.css') }}">
@@ -17,9 +25,50 @@
 
 <body>
 
-{% block content %}
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
 
+    <div class="container">
+
+        <a class="navbar-brand fw-bold"
+           href="/">
+
+            NetInsight
+
+        </a>
+
+        <div>
+
+            <a class="nav-link d-inline"
+               href="/">
+
+                Home
+
+            </a>
+
+            <a class="nav-link d-inline"
+               href="#">
+
+                Documentation
+
+            </a>
+
+            <a class="nav-link d-inline"
+               href="#">
+
+                GitHub
+
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
+
+{% block content %}
 {% endblock %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 

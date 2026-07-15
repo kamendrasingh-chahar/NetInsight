@@ -1,9 +1,62 @@
 {% extends "base.html" %}
 
+{% block title %}
+NetInsight
+{% endblock %}
+
 {% block content %}
 
-<h1>NetInsight</h1>
+<div class="container">
 
-<p>Infrastructure Health Analyzer</p>
+    <section class="hero">
+
+        <h1 class="display-3 fw-bold">
+
+            NetInsight
+
+        </h1>
+
+        <p class="lead">
+
+            Website Infrastructure Health Analyzer
+
+        </p>
+
+        <p class="description">
+
+            Analyze your website's infrastructure health by checking DNS
+            configuration, SSL certificates, HTTP availability,
+            security headers and overall connectivity.
+
+        </p>
+
+        <form
+            action="/analyze"
+            method="POST">
+
+            <div class="input-group input-group-lg">
+
+                <input
+                    class="form-control"
+                    type="text"
+                    name="domain"
+                    placeholder="example.com"
+                    required>
+
+                <button
+                    class="btn btn-primary"
+                    type="submit">
+
+                    Analyze Infrastructure
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+</div>
 
 {% endblock %}
