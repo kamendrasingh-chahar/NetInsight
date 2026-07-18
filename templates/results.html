@@ -1,38 +1,100 @@
 {% extends "base.html" %}
 
 {% block title %}
-Results
+DNS Analysis | NetInsight
 {% endblock %}
 
 {% block content %}
 
 <div class="container mt-5">
 
-    <h1 class="mb-4">
+    <div class="mb-4">
 
-        Analysis Results
+        <h1 class="display-5 fw-bold">
+            DNS Analysis
+        </h1>
 
-    </h1>
+        <p class="text-muted">
+            Website Infrastructure Report
+        </p>
 
-    <div class="card shadow-sm">
+    </div>
 
-        <div class="card-body">
+    {% if error %}
 
-            <h5>
+        <div class="alert alert-danger">
 
-                Domain Submitted
-
-            </h5>
-
-            <p class="fs-4">
-
-                {{ domain }}
-
-            </p>
+            {{ error }}
 
         </div>
 
-    </div>
+    {% else %}
+
+        <!-- Domain Card -->
+
+        <div class="card shadow-sm mb-4">
+
+            <div class="card-body">
+
+                <h5 class="text-muted">
+
+                    Domain
+
+                </h5>
+
+                <h3>
+
+                    {{ domain }}
+
+                </h3>
+
+            </div>
+
+        </div>
+
+        <!-- DNS Records -->
+
+        {% for record_type, records in dns_records.items() %}
+
+        <div class="card shadow-sm mb-3">
+
+            <div class="card-header fw-bold">
+
+                {{ record_type }} Records
+
+            </div>
+
+            <div class="card-body">
+
+                {% if records %}
+
+                    <ul class="mb-0">
+
+                        {% for record in records %}
+
+                            <li>{{ record }}</li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                {% else %}
+
+                    <p class="text-muted mb-0">
+
+                        No records found.
+
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    {% endif %}
 
 </div>
 
