@@ -1,0 +1,432 @@
+{% if report.ip_hosting.success %}
+
+{% set ip = report.ip_hosting.data %}
+
+<div class="card shadow-sm border-0 rounded-4 mb-4">
+
+    <div class="card-body">
+
+        <!-- Header -->
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+
+            <div class="d-flex align-items-center">
+
+                <i class="bi bi-hdd-network-fill text-primary fs-2 me-3"></i>
+
+                <div>
+
+                    <h3 class="fw-bold mb-0">
+
+                        IP &amp; Hosting Information
+
+                    </h3>
+
+                    <p class="text-muted mb-0">
+
+                        Network infrastructure and hosting details.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+            <span class="badge bg-primary fs-6 px-3 py-2">
+
+                {{ ip.ip_version }}
+
+            </span>
+
+        </div>
+
+        <hr>
+
+        <!-- ================================= -->
+        <!-- Network Information -->
+        <!-- ================================= -->
+
+        <h6 class="text-uppercase fw-bold text-muted mb-4">
+
+            Network Information
+
+        </h6>
+
+        <div class="row g-3 mb-5">
+
+            <!-- Public IP -->
+
+            <div class="col-md-6 col-xl-3">
+
+                <div class="border rounded-3 p-3 h-100 shadow-sm text-center">
+
+                    <i class="bi bi-globe2 text-primary fs-2 mb-3"></i>
+
+                    <small class="text-muted d-block mb-2">
+
+                        Public IP
+
+                    </small>
+
+                    <div class="fw-semibold">
+
+                        {{ ip.ip_address }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Reverse DNS -->
+
+            <div class="col-md-6 col-xl-3">
+
+                <div class="border rounded-3 p-3 h-100 shadow-sm text-center">
+
+                    <i class="bi bi-hdd-network text-primary fs-2 mb-3"></i>
+
+                    <small class="text-muted d-block mb-2">
+
+                        Reverse DNS
+
+                    </small>
+
+                    <div class="fw-semibold small text-break">
+
+                        {{ ip.reverse_dns }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Hostname -->
+
+            <div class="col-md-6 col-xl-3">
+
+                <div class="border rounded-3 p-3 h-100 shadow-sm text-center">
+
+                    <i class="bi bi-pc-display text-primary fs-2 mb-3"></i>
+
+                    <small class="text-muted d-block mb-2">
+
+                        Hostname
+
+                    </small>
+
+                    <div class="fw-semibold small text-break">
+
+                        {{ ip.hostname }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- IP Version -->
+
+            <div class="col-md-6 col-xl-3">
+
+                <div class="border rounded-3 p-3 h-100 shadow-sm text-center">
+
+                    <i class="bi bi-diagram-3 text-primary fs-2 mb-3"></i>
+
+                    <small class="text-muted d-block mb-2">
+
+                        IP Version
+
+                    </small>
+
+                    <div class="fw-semibold">
+
+                        {{ ip.ip_version }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <hr>
+
+        <!-- ================================= -->
+        <!-- Hosting Information -->
+        <!-- ================================= -->
+
+        <h6 class="text-uppercase fw-bold text-muted mb-4">
+
+            Hosting Information
+
+        </h6>
+
+        <div class="row g-3">
+
+            <!-- ASN -->
+
+            <div class="col-md-6 col-xl-3">
+
+                <div class="border rounded-3 p-3 h-100 shadow-sm">
+
+                    <small class="text-muted d-block mb-2">
+
+                        <i class="bi bi-diagram-2 text-primary me-2"></i>
+
+                        ASN
+
+                    </small>
+
+                    <div class="fw-semibold">
+
+                        {{ ip.asn }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Organization -->
+
+            <div class="col-md-6 col-xl-3">
+
+                <div class="border rounded-3 p-3 h-100 shadow-sm">
+
+                    <small class="text-muted d-block mb-2">
+
+                        <i class="bi bi-building text-primary me-2"></i>
+
+                        Organization
+
+                    </small>
+
+                    <div class="fw-semibold text-break">
+
+                        {{ ip.organization }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- ISP -->
+
+            <div class="col-md-6 col-xl-3">
+
+                <div class="border rounded-3 p-3 h-100 shadow-sm">
+
+                    <small class="text-muted d-block mb-2">
+
+                        <i class="bi bi-router text-primary me-2"></i>
+
+                        ISP
+
+                    </small>
+
+                    <div class="fw-semibold text-break">
+
+                        {{ ip.isp }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Network -->
+
+            <div class="col-md-6 col-xl-3">
+
+                <div class="border rounded-3 p-3 h-100 shadow-sm">
+
+                    <small class="text-muted d-block mb-2">
+
+                        <i class="bi bi-diagram-3 text-primary me-2"></i>
+
+                        Network
+
+                    </small>
+
+                    <div class="fw-semibold text-break">
+
+                        {{ ip.network }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <hr class="my-5">
+
+                <!-- ================================= -->
+        <!-- Geographic Information -->
+        <!-- ================================= -->
+
+        <h6 class="text-uppercase fw-bold text-muted mb-4">
+
+            Geographic Information
+
+        </h6>
+
+        <div class="row g-3 mb-5">
+
+            <!-- Country -->
+
+            <div class="col-md-6 col-xl-4">
+
+                <div class="border rounded-3 p-3 h-100 shadow-sm">
+
+                    <small class="text-muted d-block mb-2">
+
+                        <i class="bi bi-globe-americas text-primary me-2"></i>
+
+                        Country
+
+                    </small>
+
+                    <div class="fw-semibold">
+
+                        {{ ip.country }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <hr>
+
+        <!-- ================================= -->
+        <!-- Hosting and Cloud -->
+        <!-- ================================= -->
+
+        <h6 class="text-uppercase fw-bold text-muted mb-4">
+
+            Hosting and Cloud
+
+        </h6>
+
+        <div class="row g-3">
+
+            <!-- Hosting Provider -->
+
+            <div class="col-lg-6">
+
+                <div class="border rounded-3 p-4 h-100 shadow-sm text-center">
+
+                    <i class="bi bi-building text-primary fs-1 mb-3"></i>
+
+                    <small class="text-muted d-block mb-2">
+
+                        Hosting Provider
+
+                    </small>
+
+                    <div class="fw-semibold fs-5 text-break">
+
+                        {{ ip.hosting_provider }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Cloud Provider -->
+
+            <div class="col-lg-6">
+
+                <div class="border rounded-3 p-4 h-100 shadow-sm text-center">
+
+                    <i class="bi bi-cloud-fill text-primary fs-1 mb-3"></i>
+
+                    <small class="text-muted d-block mb-2">
+
+                        Cloud Provider
+
+                    </small>
+
+                    <div class="fw-semibold fs-5 text-break">
+
+                        {{ ip.cloud_provider }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% if ip.lookup_status is defined %}
+
+        <hr class="my-5">
+
+        <div class="alert alert-warning border-0 shadow-sm mb-0">
+
+            <div class="d-flex align-items-start">
+
+                <i class="bi bi-exclamation-triangle-fill text-warning fs-4 me-3"></i>
+
+                <div>
+
+                    <h6 class="fw-bold mb-1">
+
+                        Partial Lookup Completed
+
+                    </h6>
+
+                    <p class="mb-0 text-muted">
+
+                        Some IP ownership or hosting information could not be retrieved.
+                        Basic network information has been successfully collected.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% else %}
+
+<div class="card shadow-sm border-0 rounded-4 mb-4">
+
+    <div class="card-body text-center py-5">
+
+        <i class="bi bi-hdd-network text-secondary display-4 mb-3"></i>
+
+        <h4 class="fw-bold mb-2">
+
+            IP &amp; Hosting Information
+
+        </h4>
+
+        <p class="text-muted mb-0">
+
+            {{ report.ip_hosting.message }}
+
+        </p>
+
+    </div>
+
+</div>
+
+{% endif %}

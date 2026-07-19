@@ -1,8 +1,9 @@
-from utils.response import success_response, error_response
-
 import socket
 import ssl
+
 from datetime import datetime
+
+from utils.response import success_response, error_response
 
 
 class SSLChecker:
@@ -11,6 +12,7 @@ class SSLChecker:
     """
 
     def __init__(self, domain: str):
+
         self.domain = domain
 
     def _get_field(self, certificate_field, field_name):
@@ -19,8 +21,11 @@ class SSLChecker:
         """
 
         for item in certificate_field:
+
             for key, value in item:
+
                 if key == field_name:
+
                     return value
 
         return "Unknown"
@@ -44,31 +49,41 @@ class SSLChecker:
                     server_hostname=self.domain
                 ) as secure_socket:
 
-                    cert = secure_socket.getpeercert()
+                    certificate = secure_socket.getpeercert()
+
+                    tls_version = secure_socket.version()
+
+                    cipher_suite = secure_socket.cipher()[0]
 
             issued_to = self._get_field(
-                cert["subject"],
+                certificate["subject"],
                 "commonName"
             )
 
             issued_by = self._get_field(
-                cert["issuer"],
+                certificate["issuer"],
                 "organizationName"
             )
 
             valid_from = datetime.strptime(
-                cert["notBefore"],
+                certificate["notBefore"],
                 "%b %d %H:%M:%S %Y %Z"
             )
 
             valid_until = datetime.strptime(
-                cert["notAfter"],
+                certificate["notAfter"],
                 "%b %d %H:%M:%S %Y %Z"
             )
 
-            days_remaining = (valid_until - datetime.utcnow()).days
+            days_remaining = (
+                valid_until - datetime.utcnow()
+            ).days
 
             return success_response({
+
+                "valid": True,
+
+                "expired": days_remaining < 0,
 
                 "issued_to": issued_to,
 
@@ -79,6 +94,10 @@ class SSLChecker:
                 "valid_until": valid_until.strftime("%d %b %Y"),
 
                 "days_remaining": days_remaining,
+
+                "tls_version": tls_version,
+
+                "cipher": cipher_suite
 
             })
 

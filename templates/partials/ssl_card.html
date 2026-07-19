@@ -1,0 +1,250 @@
+<div class="card shadow-sm border-0 rounded-4 mb-5">
+
+    <div class="card-body">
+
+        <div class="d-flex align-items-center mb-2">
+
+            <i class="bi bi-shield-lock-fill text-success fs-2 me-3"></i>
+
+            <div>
+
+                <h3 class="fw-bold mb-0">
+
+                    SSL Certificate
+
+                </h3>
+
+                <p class="text-muted mb-0">
+
+                    SSL certificate details and encryption information.
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <hr class="my-4">
+
+        {% if report.ssl.success %}
+
+        <div class="row g-4">
+
+            <!-- Left Column -->
+
+            <div class="col-lg-6">
+
+                <div class="mb-4">
+
+                    <small class="text-muted text-uppercase">
+
+                        Certificate Status
+
+                    </small>
+
+                    <div class="mt-1">
+
+                        {% if report.ssl.data.valid %}
+
+                        <span class="badge bg-success fs-6 px-3 py-2">
+
+                            <i class="bi bi-check-circle-fill me-1"></i>
+
+                            Valid
+
+                        </span>
+
+                        {% else %}
+
+                        <span class="badge bg-danger fs-6 px-3 py-2">
+
+                            <i class="bi bi-x-circle-fill me-1"></i>
+
+                            Invalid
+
+                        </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                <div class="mb-4">
+
+                    <small class="text-muted text-uppercase">
+
+                        Issued To
+
+                    </small>
+
+                    <h5 class="fw-semibold mt-1">
+
+                        {{ report.ssl.data.issued_to }}
+
+                    </h5>
+
+                </div>
+
+                <div class="mb-4">
+
+                    <small class="text-muted text-uppercase">
+
+                        Issued By
+
+                    </small>
+
+                    <h5 class="fw-semibold mt-1">
+
+                        {{ report.ssl.data.issued_by }}
+
+                    </h5>
+
+                </div>
+
+                <div>
+
+                    <small class="text-muted text-uppercase">
+
+                        Valid From
+
+                    </small>
+
+                    <h5 class="fw-semibold mt-1">
+
+                        {{ report.ssl.data.valid_from }}
+
+                    </h5>
+
+                </div>
+
+            </div>
+
+
+            <!-- Right Column -->
+
+            <div class="col-lg-6">
+
+                <div class="mb-4">
+
+                    <small class="text-muted text-uppercase">
+
+                        Valid Until
+
+                    </small>
+
+                    <h5 class="fw-semibold mt-1">
+
+                        {{ report.ssl.data.valid_until }}
+
+                    </h5>
+
+                </div>
+
+                <div class="mb-4">
+
+                    <small class="text-muted text-uppercase">
+
+                        Days Remaining
+
+                    </small>
+
+                    <div class="mt-1">
+
+                        {% if report.ssl.data.days_remaining > 90 %}
+
+                        <span class="badge bg-success fs-6 px-3 py-2">
+
+                            {{ report.ssl.data.days_remaining }} Days
+
+                        </span>
+
+                        {% elif report.ssl.data.days_remaining > 30 %}
+
+                        <span class="badge bg-warning text-dark fs-6 px-3 py-2">
+
+                            {{ report.ssl.data.days_remaining }} Days
+
+                        </span>
+
+                        {% else %}
+
+                        <span class="badge bg-danger fs-6 px-3 py-2">
+
+                            {{ report.ssl.data.days_remaining }} Days
+
+                        </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                <div class="mb-4">
+
+                    <small class="text-muted text-uppercase">
+
+                        TLS Version
+
+                    </small>
+
+                    <div class="mt-2">
+
+                        <span class="badge bg-primary fs-6 px-3 py-2">
+
+                            {{ report.ssl.data.tls_version }}
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div>
+
+                    <small class="text-muted text-uppercase">
+
+                        Cipher Suite
+
+                    </small>
+
+                    <div class="mt-2">
+
+                        <code class="fs-6">
+
+                            {{ report.ssl.data.cipher }}
+
+                        </code>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% else %}
+
+        <div class="alert alert-danger mb-0">
+
+            <h5 class="fw-bold">
+
+                SSL Check Failed
+
+            </h5>
+
+            <p class="mb-0">
+
+                {{ report.ssl.error }}
+
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>

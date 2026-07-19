@@ -4,6 +4,10 @@ from services.http.status import HTTPChecker
 from services.headers.security import SecurityHeadersChecker
 from services.cdn.detector import CDNDetector
 from services.email.security import EmailSecurityAnalyzer
+from services.whois.analyzer import WhoisAnalyzer
+from services.technology.analyzer import TechnologyAnalyzer
+from services.iphosting.ip_hosting_analyzer import IPHostingAnalyzer
+from services.recommendations.recommendation_engine import RecommendationEngine
 from services.scoring.health_score import HealthScoreCalculator
 
 
@@ -30,6 +34,16 @@ class InfrastructureAnalyzer:
     def _analyze_cdn(self):
         return CDNDetector(self.domain).analyze()
 
+    def _calculate_health(self, report):
+        return HealthScoreCalculator(report).analyze()
+    
+    def _generate_recommendations(self, report):
+        return RecommendationEngine(report).generate()
+
+    def _analyze_technology(self):
+        analyzer = TechnologyAnalyzer(self.domain)
+        return analyzer.analyze()
+
     def _analyze_email(self, dns_result):
         """
         Uses existing DNS data.
@@ -40,8 +54,12 @@ class InfrastructureAnalyzer:
             dns_result["data"]
         ).analyze()
 
-    def _calculate_health(self, report):
-        return HealthScoreCalculator(report).analyze()
+
+    def _analyze_ip_hosting(self):
+        return IPHostingAnalyzer(self.domain).analyze()
+
+    def _analyze_whois(self):
+        return WhoisAnalyzer(self.domain).analyze()
 
     def analyze(self):
         """
@@ -58,14 +76,26 @@ class InfrastructureAnalyzer:
 
             "http": self._analyze_http(),
 
+            "technology": self._analyze_technology(),
+
             "security_headers": self._analyze_security_headers(),
 
             "cdn": self._analyze_cdn(),
 
-            "email": self._analyze_email(dns_result)
+            "email_security": self._analyze_email(dns_result),
+
+            "whois": self._analyze_whois(),
+
+            "ip_hosting": self._analyze_ip_hosting(),
 
         }
 
         report["health"] = self._calculate_health(report)
+
+        engine = RecommendationEngine(report)
+
+        report["recommendations"] = engine.generate()
+
+        report["recommendation_summary"] = engine.summary(report["recommendations"])
 
         return report

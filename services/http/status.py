@@ -1,4 +1,5 @@
 import time
+from http import HTTPStatus
 
 import requests
 
@@ -10,10 +11,43 @@ class HTTPChecker:
     Performs HTTP/HTTPS analysis.
     """
 
+    REQUEST_HEADERS = {
+
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/138.0.0.0 Safari/537.36"
+        )
+
+    }
+
     def __init__(self, domain: str):
+
         self.domain = domain
 
+    def _performance_rating(self, response_time: float):
+        """
+        Returns a performance rating based on response time.
+        """
+
+        if response_time < 300:
+
+            return "Excellent"
+
+        elif response_time < 700:
+
+            return "Good"
+
+        elif response_time < 1200:
+
+            return "Average"
+
+        return "Slow"
+
     def analyze(self):
+        """
+        Performs HTTP/HTTPS analysis.
+        """
 
         try:
 
@@ -23,7 +57,8 @@ class HTTPChecker:
 
             response = requests.get(
                 url,
-                timeout=5,
+                headers=self.REQUEST_HEADERS,
+                timeout=10,
                 allow_redirects=True
             )
 
@@ -32,22 +67,54 @@ class HTTPChecker:
                 2
             )
 
+            status_text = HTTPStatus(
+                response.status_code
+            ).phrase
+
+            performance = self._performance_rating(
+                elapsed
+            )
+
             return success_response({
 
                 "status_code": response.status_code,
 
+                "status_text": status_text,
+
+                "https": response.url.startswith("https"),
+
                 "final_url": response.url,
 
+                "redirects": len(response.history),
+
                 "response_time_ms": elapsed,
+
+                "performance": performance,
 
                 "server": response.headers.get(
                     "Server",
                     "Unknown"
                 ),
 
-                "https": response.url.startswith("https"),
+                "content_type": response.headers.get(
+                    "Content-Type",
+                    "Unknown"
+                ),
 
-                "redirects": len(response.history)
+                "content_length": response.headers.get(
+                    "Content-Length",
+                    "Unknown"
+                ),
+
+                "compression": response.headers.get(
+                    "Content-Encoding",
+                    "None"
+                ),
+
+                "powered_by": response.headers.get(
+                    "X-Powered-By",
+                    "Not Disclosed"
+                )
 
             })
 

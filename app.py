@@ -1,6 +1,8 @@
+from datetime import datetime
+
 from flask import Flask, render_template, request
 
-from services.dns.lookup import DNSLookup
+from services.analyzer.analyzer import InfrastructureAnalyzer
 from utils.validators import is_valid_domain
 
 app = Flask(__name__)
@@ -14,28 +16,53 @@ def home():
 @app.route("/analyze", methods=["POST"])
 def analyze():
 
-    domain = request.form.get("domain", "").strip().lower()
+    # Current report generation time
+    generated_at = datetime.now().strftime("%d %b %Y • %I:%M %p")
 
+    # Get submitted domain
+    domain = request.form.get(
+        "domain",
+        ""
+    ).strip().lower()
+
+    # Validate domain
     if not is_valid_domain(domain):
 
         return render_template(
+
             "results.html",
+
             domain=domain,
-            error="Please enter a valid domain name.",
-            dns_records=None
+
+            report=None,
+
+            generated_at=generated_at,
+
+            error="Please enter a valid domain name."
+
         )
 
-    # DNS Analysis
-    dns_service = DNSLookup(domain)
-    dns_result = dns_service.analyze()
+    # Run infrastructure analysis
+    report = InfrastructureAnalyzer(
+        domain
+    ).analyze()
 
+    # Render report
     return render_template(
+
         "results.html",
+
         domain=domain,
-        dns_records=dns_result["data"],
-        error=dns_result["error"]
+
+        report=report,
+
+        generated_at=generated_at,
+
+        error=None
+
     )
 
 
 if __name__ == "__main__":
+
     app.run(debug=True)

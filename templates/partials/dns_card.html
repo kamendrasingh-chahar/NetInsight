@@ -1,0 +1,171 @@
+<div class="card shadow-sm border-0 rounded-4 mb-5">
+
+    <div class="card-body">
+
+        <h3 class="fw-bold mb-1">
+
+            DNS Analysis
+
+        </h3>
+
+        <p class="text-muted mb-4">
+
+            Website DNS configuration and record overview.
+
+        </p>
+
+        <div class="accordion" id="dnsAccordion">
+
+            {% for record_type, records in report.dns.data.items() %}
+
+            <div class="accordion-item border rounded-3 mb-3">
+
+                <h2 class="accordion-header" id="heading{{ loop.index }}">
+
+                    <button
+                        class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapse{{ loop.index }}"
+                        aria-expanded="false"
+                        aria-controls="collapse{{ loop.index }}">
+
+                        <div class="w-100">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    {% if record_type == "A" %}
+                                        🌐
+                                    {% elif record_type == "AAAA" %}
+                                        🌍
+                                    {% elif record_type == "MX" %}
+                                        📧
+                                    {% elif record_type == "TXT" %}
+                                        📝
+                                    {% elif record_type == "NS" %}
+                                        🛰️
+                                    {% elif record_type == "CNAME" %}
+                                        🔗
+                                    {% elif record_type == "SOA" %}
+                                        ⚙️
+                                    {% else %}
+                                        📄
+                                    {% endif %}
+
+                                    <strong class="ms-2">
+
+                                        {{ record_type }} Records
+
+                                    </strong>
+
+                                </div>
+
+                                <div class="text-end me-3">
+
+                                    {% if records %}
+
+                                        <span class="badge bg-success">
+
+                                            {{ records|length }} Found
+
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge bg-secondary">
+
+                                            None
+
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                            <small class="text-muted ms-4">
+
+                                {% if record_type == "A" %}
+                                    IPv4 Address Records
+                                {% elif record_type == "AAAA" %}
+                                    IPv6 Address Records
+                                {% elif record_type == "MX" %}
+                                    Mail Exchange Servers
+                                {% elif record_type == "TXT" %}
+                                    Verification & SPF Records
+                                {% elif record_type == "NS" %}
+                                    Authoritative Name Servers
+                                {% elif record_type == "CNAME" %}
+                                    Canonical Name Alias
+                                {% elif record_type == "SOA" %}
+                                    Start of Authority
+                                {% endif %}
+
+                            </small>
+
+                        </div>
+
+                    </button>
+
+                </h2>
+
+                <div
+                    id="collapse{{ loop.index }}"
+                    class="accordion-collapse collapse"
+                    aria-labelledby="heading{{ loop.index }}"
+                    data-bs-parent="#dnsAccordion">
+
+                    <div class="accordion-body">
+
+                        {% if records %}
+
+                            <div class="mb-3">
+
+                                <strong>
+
+                                    Records
+
+                                </strong>
+
+                            </div>
+
+                            <ul class="list-group list-group-flush">
+
+                                {% for record in records %}
+
+                                    <li class="list-group-item">
+
+                                        <code>{{ record }}</code>
+
+                                    </li>
+
+                                {% endfor %}
+
+                            </ul>
+
+                        {% else %}
+
+                            <div class="alert alert-light border mb-0">
+
+                                No {{ record_type }} records were found for this domain.
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>

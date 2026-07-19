@@ -140,7 +140,9 @@ class EmailSecurityAnalyzer:
 
         return {
 
-            "enabled": False,
+            "enabled": None,
+
+            "selector": None,
 
             "selector": "Unknown"
 

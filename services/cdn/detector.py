@@ -23,6 +23,7 @@ class CDNDetector:
         "Fastly": [
             "x-served-by"
         ]
+
     }
 
     DNS_PATTERNS = {
@@ -52,6 +53,7 @@ class CDNDetector:
         "CacheFly": [
             "cachefly.net"
         ]
+
     }
 
     def __init__(self, domain: str):
@@ -62,7 +64,9 @@ class CDNDetector:
         Detect CDN using HTTP response headers.
         """
 
+        detected_provider = None
         evidence = []
+        methods = []
 
         response = requests.get(
             f"https://{self.domain}",
@@ -83,20 +87,24 @@ class CDNDetector:
 
                     if pattern in header or pattern in value:
 
+                        detected_provider = provider
+
+                        methods.append("HTTP Header")
+
                         evidence.append(
-                            f"{provider} detected via HTTP header '{header}'"
+                            f"{header}: {value}"
                         )
 
-                        return provider, evidence
-
-        return None, evidence
+        return detected_provider, methods, evidence
 
     def _check_dns(self):
         """
-        Detect CDN using DNS CNAME records.
+        Detect CDN using DNS CNAME.
         """
 
+        detected_provider = None
         evidence = []
+        methods = []
 
         try:
 
@@ -105,7 +113,9 @@ class CDNDetector:
                 "CNAME"
             )
 
-            cname = str(answers[0].target).lower()
+            cname = str(
+                answers[0].target
+            ).lower()
 
             for provider, patterns in self.DNS_PATTERNS.items():
 
@@ -113,28 +123,34 @@ class CDNDetector:
 
                     if pattern in cname:
 
-                        evidence.append(
-                            f"{provider} detected via DNS CNAME '{cname}'"
-                        )
+                        detected_provider = provider
 
-                        return provider, evidence
+                        methods.append("DNS CNAME")
+
+                        evidence.append(cname)
 
         except Exception:
             pass
 
-        return None, evidence
+        return detected_provider, methods, evidence
 
     def analyze(self):
 
         try:
 
-            http_provider, http_evidence = self._check_http_headers()
+            http_provider, http_methods, http_evidence = self._check_http_headers()
 
-            dns_provider, dns_evidence = self._check_dns()
-
-            evidence = http_evidence + dns_evidence
+            dns_provider, dns_methods, dns_evidence = self._check_dns()
 
             provider = http_provider or dns_provider
+
+            methods = list(
+                dict.fromkeys(
+                    http_methods + dns_methods
+                )
+            )
+
+            evidence = http_evidence + dns_evidence
 
             if http_provider and dns_provider:
 
@@ -155,6 +171,8 @@ class CDNDetector:
                 "provider": provider if provider else "Unknown",
 
                 "confidence": confidence,
+
+                "detected_via": methods,
 
                 "evidence": evidence
 

@@ -1,9 +1,9 @@
 from pprint import pprint
-
+import dns.resolver
 from services.dns.lookup import DNSLookup
 from services.email.security import EmailSecurityAnalyzer
 
-domain = "microsoft.com"
+domain = "google.com"
 
 dns = DNSLookup(domain).analyze()
 

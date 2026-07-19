@@ -1,0 +1,285 @@
+<div class="mb-4">
+
+    <h3 class="fw-bold">
+
+        Executive Summary
+
+    </h3>
+
+    <p class="text-muted mb-0">
+
+        Quick overview of the website's infrastructure health and security.
+
+    </p>
+
+</div>
+
+{% set score = report.health.data.score %}
+
+{% if score >= 90 %}
+    {% set health_color = "success" %}
+    {% set health_label = "Excellent" %}
+{% elif score >= 75 %}
+    {% set health_color = "primary" %}
+    {% set health_label = "Good" %}
+{% elif score >= 60 %}
+    {% set health_color = "warning" %}
+    {% set health_label = "Needs Attention" %}
+{% else %}
+    {% set health_color = "danger" %}
+    {% set health_label = "Critical" %}
+{% endif %}
+
+<div class="row g-4 mb-4">
+
+    <!-- Health Score -->
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="card shadow-sm border-0 rounded-4 h-100 summary-card health-card"
+     data-bs-toggle="collapse"
+     data-bs-target="#healthBreakdown"
+     aria-expanded="false"
+     aria-controls="healthBreakdown"
+     style="cursor:pointer;">
+
+            <div class="card-body text-center py-4">
+
+                <i class="bi bi-heart-pulse-fill text-{{ health_color }} display-5"></i>
+
+                <p class="text-muted small mt-3 mb-2">
+
+                    Health Score
+
+                </p>
+
+                <h1 class="fw-bold text-{{ health_color }} mb-0">
+
+                    {{ score }}
+
+                    <span class="fs-5 text-muted">
+
+                        /100
+
+                    </span>
+
+                </h1>
+
+                <span class="badge rounded-pill bg-{{ health_color }} mt-3">
+
+                    {{ health_label }}
+
+                </span>
+
+                <hr class="my-3">
+
+<div class="d-flex justify-content-center align-items-center text-primary fw-semibold">
+
+    <i class="bi bi-bar-chart-fill me-2"></i>
+
+    <span>Click to View Breakdown</span>
+
+    <i class="bi bi-chevron-down ms-2" id="healthChevron"></i>
+
+</div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- HTTP -->
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="card shadow-sm border-0 rounded-4 h-100 summary-card">
+
+            <div class="card-body text-center py-4">
+
+                <i class="bi bi-globe2 text-primary display-5"></i>
+
+                <p class="text-muted small mt-3 mb-2">
+
+                    HTTP Status
+
+                </p>
+
+                <h1 class="fw-bold mb-1">
+
+                    {{ report.http.data.status_code }}
+
+                </h1>
+
+                <p class="text-muted small mb-2">
+
+                    {% if report.http.data.status_code == 200 %}
+                        OK
+                    {% elif report.http.data.status_code == 301 %}
+                        Redirect
+                    {% elif report.http.data.status_code == 302 %}
+                        Temporary Redirect
+                    {% elif report.http.data.status_code == 404 %}
+                        Not Found
+                    {% elif report.http.data.status_code >= 500 %}
+                        Server Error
+                    {% else %}
+                        Response Received
+                    {% endif %}
+
+                </p>
+
+                {% if report.http.data.https %}
+
+                    <span class="badge rounded-pill bg-primary">
+
+                        HTTPS Enabled
+
+                    </span>
+
+                {% else %}
+
+                    <span class="badge rounded-pill bg-warning text-dark">
+
+                        HTTP Only
+
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- SSL -->
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="card shadow-sm border-0 rounded-4 h-100 summary-card">
+
+            <div class="card-body text-center py-4">
+
+                <i class="bi bi-shield-lock-fill text-success display-5"></i>
+
+                <p class="text-muted small mt-3 mb-2">
+
+                    SSL Certificate
+
+                </p>
+
+                {% if report.ssl.success %}
+
+                    <h2 class="fw-bold text-success">
+
+                        Valid
+
+                    </h2>
+
+                    {% if report.ssl.data.days_remaining %}
+
+                        <p class="text-muted small mb-2">
+
+                            {{ report.ssl.data.days_remaining }} Days Remaining
+
+                        </p>
+
+                    {% endif %}
+
+                    <span class="badge rounded-pill bg-success">
+
+                        Secure Connection
+
+                    </span>
+
+                {% else %}
+
+                    <h2 class="fw-bold text-danger">
+
+                        Invalid
+
+                    </h2>
+
+                    <span class="badge rounded-pill bg-danger">
+
+                        Certificate Error
+
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CDN -->
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="card shadow-sm border-0 rounded-4 h-100 summary-card">
+
+            <div class="card-body text-center py-4">
+
+                <i class="bi bi-cloud-fill text-info display-5"></i>
+
+                <p class="text-muted small mt-3 mb-2">
+
+                    Content Delivery Network
+
+                </p>
+
+                {% if report.cdn.data.detected %}
+
+                    <h5 class="fw-bold">
+
+                        {{ report.cdn.data.provider }}
+
+                    </h5>
+
+                    <p class="text-muted small mb-2">
+
+                        CDN Detected
+
+                    </p>
+
+                    <span class="badge rounded-pill bg-info text-dark">
+
+                        {{ report.cdn.data.confidence }} Confidence
+
+                    </span>
+
+                {% else %}
+
+                    <h5 class="fw-bold text-secondary">
+
+                        Not Detected
+
+                    </h5>
+
+                    <p class="text-muted small mb-2">
+
+                        No CDN Identified
+
+                    </p>
+
+                    <span class="badge rounded-pill bg-secondary">
+
+                        Unknown
+
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

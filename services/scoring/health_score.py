@@ -3,7 +3,7 @@ from utils.response import success_response
 
 class HealthScoreCalculator:
     """
-    Calculates the overall infrastructure health score.
+   Calculates the overall infrastructure health score.
     """
 
     def __init__(self, report):
@@ -11,74 +11,136 @@ class HealthScoreCalculator:
 
     def analyze(self):
 
-        score = 100
+        breakdown = {}
 
-        deductions = []
+        # ----------------------------------
+        # DNS (20)
+        # ----------------------------------
 
-        dns = self.report["dns"]
-        ssl = self.report["ssl"]
-        http = self.report["http"]
-        headers = self.report["security_headers"]
+        dns_score = 20 if self.report["dns"]["success"] else 0
 
-        # DNS
+        breakdown["DNS"] = {
+            "score": dns_score,
+            "max": 20
+        }
 
-        if not dns["success"]:
-            score -= 30
-            deductions.append("DNS lookup failed.")
+        # ----------------------------------
+        # SSL (20)
+        # ----------------------------------
 
-        # SSL
+        ssl_score = 20 if self.report["ssl"]["success"] else 0
 
-        if not ssl["success"]:
-            score -= 30
-            deductions.append("SSL certificate unavailable.")
+        breakdown["SSL"] = {
+            "score": ssl_score,
+            "max": 20
+        }
 
-        # HTTP
+        # ----------------------------------
+        # HTTP (15)
+        # ----------------------------------
 
-        if not http["success"]:
-            score -= 20
-            deductions.append("HTTP request failed.")
+        http_score = 0
 
-        else:
+        if self.report["http"]["success"]:
 
-            status = http["data"]["status_code"]
+            http = self.report["http"]["data"]
 
-            if status != 200:
-                score -= 10
-                deductions.append(
-                    f"Unexpected HTTP status ({status})."
-                )
+            if http["status_code"] == 200:
+                http_score += 10
 
-            if http["data"]["response_time_ms"] > 500:
-                score -= 5
-                deductions.append(
-                    "Slow response time."
-                )
+            if http["response_time_ms"] < 500:
+                http_score += 5
 
-        # Security Headers
+        breakdown["HTTP"] = {
+            "score": http_score,
+            "max": 15
+        }
 
-        if headers["success"]:
+        # ----------------------------------
+        # Security Headers (25)
+        # ----------------------------------
 
-            missing = 0
+        header_score = 0
 
-            for value in headers["data"].values():
+        if self.report["security_headers"]["success"]:
 
-                if value == "Missing":
-                    missing += 1
+            headers = self.report["security_headers"]["data"]["headers"]
 
-            score -= missing * 2
+            total_headers = len(headers)
 
-            if missing:
+            present_headers = sum(
+                1
+                for header in headers.values()
+                if header["present"]
+            )
 
-                deductions.append(
-                    f"{missing} security headers missing."
-                )
+            header_score = round(
+                (present_headers / total_headers) * 25
+            )
 
-        score = max(score, 0)
+        breakdown["Security Headers"] = {
+            "score": header_score,
+            "max": 25
+        }
+
+        # ----------------------------------
+        # CDN (10)
+        # ----------------------------------
+
+        cdn_score = 0
+
+        if (
+            self.report["cdn"]["success"]
+            and
+            self.report["cdn"]["data"]["detected"]
+        ):
+            cdn_score = 10
+
+        breakdown["CDN"] = {
+            "score": cdn_score,
+            "max": 10
+        }
+
+        # ----------------------------------
+        # Email Security (10)
+        # ----------------------------------
+
+        email_score = 0
+
+        if self.report["email_security"]["success"]:
+
+            email = self.report["email_security"]["data"]
+
+            if email["mx"]:
+                email_score += 2.5
+
+            if email["spf"]:
+                email_score += 2.5
+
+            if email["dmarc"]:
+                email_score += 2.5
+
+            if email["dkim"]["enabled"]:
+                email_score += 2.5
+
+        breakdown["Email Security"] = {
+            "score": round(email_score),
+            "max": 10
+        }
+
+        # ----------------------------------
+        # Final Score
+        # ----------------------------------
+
+        total_score = sum(
+            item["score"]
+            for item in breakdown.values()
+        )
 
         return success_response({
 
-            "score": score,
+            "score": total_score,
 
-            "deductions": deductions
+            "breakdown": breakdown
 
         })

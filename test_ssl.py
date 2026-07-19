@@ -4,4 +4,4 @@ from services.ssl.checker import SSLChecker
 
 checker = SSLChecker("google.com")
 
-pprint(checker.get_certificate())
+pprint(checker.analyze())

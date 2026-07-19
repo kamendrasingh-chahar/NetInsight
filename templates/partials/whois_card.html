@@ -1,0 +1,352 @@
+<div class="card shadow-sm border-0 rounded-4 mb-4">
+
+    <div class="card-body">
+
+        <!-- Header -->
+        <div class="d-flex align-items-center mb-3">
+
+            <i class="bi bi-person-vcard-fill text-primary fs-2 me-3"></i>
+
+            <div>
+
+                <h3 class="fw-bold mb-0">
+                    WHOIS Information
+                </h3>
+
+                <p class="text-muted mb-0">
+                    Domain registration and ownership details.
+                </p>
+
+            </div>
+
+        </div>
+
+        <hr>
+
+        {% if report.whois.success %}
+
+        <!-- Summary Cards -->
+
+        <div class="row g-3 mb-4">
+
+            <!-- Registrar -->
+
+            <div class="col-md-6 col-xl-3">
+
+                <div class="border rounded-3 p-3 h-100 shadow-sm">
+
+                    <small class="text-muted d-block mb-2">
+
+                        <i class="bi bi-building text-primary me-2"></i>
+
+                        Registrar
+
+                    </small>
+
+                    <div class="fw-semibold">
+
+                        {{ report.whois.data.registrar }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Domain Age -->
+
+            <div class="col-md-6 col-xl-3">
+
+                <div class="border rounded-3 p-3 h-100 shadow-sm">
+
+                    <small class="text-muted d-block mb-2">
+
+                        <i class="bi bi-calendar-check text-primary me-2"></i>
+
+                        Domain Age
+
+                    </small>
+
+                    <div class="fw-semibold text-primary">
+
+                        {{ report.whois.data.domain_age }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Expires -->
+
+            <div class="col-md-6 col-xl-3">
+
+                <div class="border rounded-3 p-3 h-100 shadow-sm">
+
+                    <small class="text-muted d-block mb-2">
+
+                        <i class="bi bi-hourglass-split text-primary me-2"></i>
+
+                        Expires In
+
+                    </small>
+
+                    <div>
+
+                        {% if report.whois.data.expires_in is not none %}
+
+                            {% if report.whois.data.expires_in < 30 %}
+
+                                <span class="badge bg-danger fs-6">
+
+                                    {{ report.whois.data.expires_in }} Days
+
+                                </span>
+
+                            {% elif report.whois.data.expires_in < 90 %}
+
+                                <span class="badge bg-warning text-dark fs-6">
+
+                                    {{ report.whois.data.expires_in }} Days
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-success fs-6">
+
+                                    {{ report.whois.data.expires_in }} Days
+
+                                </span>
+
+                            {% endif %}
+
+                        {% else %}
+
+                            <span class="text-muted">
+
+                                Unavailable
+
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Country -->
+
+            <div class="col-md-6 col-xl-3">
+
+                <div class="border rounded-3 p-3 h-100 shadow-sm">
+
+                    <small class="text-muted d-block mb-2">
+
+                        <i class="bi bi-globe-americas text-primary me-2"></i>
+
+                        Country
+
+                    </small>
+
+                    <div class="fw-semibold">
+
+                        {{ report.whois.data.registrant_country }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Details -->
+
+        <div class="row">
+
+            <!-- Left -->
+
+            <div class="col-lg-6">
+
+                <table class="table table-borderless align-middle">
+
+                    <tbody>
+
+                        <tr>
+
+                            <th width="42%">
+
+                                <i class="bi bi-globe2 text-primary me-2"></i>
+
+                                Domain
+
+                            </th>
+
+                            <td>
+
+                                {{ report.whois.data.domain_name }}
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                <i class="bi bi-calendar-plus text-primary me-2"></i>
+
+                                Creation Date
+
+                            </th>
+
+                            <td>
+
+                                {{ report.whois.data.creation_date }}
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                <i class="bi bi-arrow-repeat text-primary me-2"></i>
+
+                                Updated Date
+
+                            </th>
+
+                            <td>
+
+                                {{ report.whois.data.updated_date }}
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                <i class="bi bi-calendar-x text-primary me-2"></i>
+
+                                Expiration Date
+
+                            </th>
+
+                            <td>
+
+                                {{ report.whois.data.expiration_date }}
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <!-- Right -->
+
+            <div class="col-lg-6">
+
+                <!-- Status -->
+
+                <div class="mb-4">
+
+                    <h6 class="fw-bold mb-3">
+
+                        <i class="bi bi-shield-check text-success me-2"></i>
+
+                        Domain Status
+
+                    </h6>
+
+                    {% if report.whois.data.status %}
+
+                        {% for status in report.whois.data.status %}
+
+                            <span class="badge bg-success rounded-pill px-3 py-2 me-2 mb-2">
+
+                                {{ status }}
+
+                            </span>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <span class="text-muted">
+
+                            Unavailable
+
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+                <!-- Name Servers -->
+
+                <div>
+
+                    <h6 class="fw-bold mb-3">
+
+                        <i class="bi bi-hdd-network text-primary me-2"></i>
+
+                        Name Servers
+
+                    </h6>
+
+                    {% if report.whois.data.name_servers %}
+
+                        {% for ns in report.whois.data.name_servers %}
+
+                            <div class="border rounded-3 bg-white shadow-sm px-3 py-2 mb-2">
+
+                                <i class="bi bi-diagram-3 text-primary me-2"></i>
+
+                                {{ ns }}
+
+                            </div>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <span class="text-muted">
+
+                            Unavailable
+
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% else %}
+
+        <div class="alert alert-warning mb-0">
+
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+
+            {{ report.whois.error }}
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
