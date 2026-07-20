@@ -31,7 +31,7 @@
     tech.analytics|length
 %}
 
-<div class="card shadow-sm border-0 rounded-4 mb-4">
+<div id="technology" class="card shadow-sm border-0 rounded-4 mb-4">
 
     <div class="card-header bg-white border-0 py-4">
 
@@ -40,19 +40,13 @@
             <div>
 
                 <h4 class="mb-1 fw-bold">
-
                     <i class="fas fa-microchip text-primary me-2"></i>
-
                     Technology Detection
-
                 </h4>
 
                 <p class="text-muted mb-0">
-
                     Infrastructure and application technologies detected for
-
                     <strong>{{ domain }}</strong>
-
                 </p>
 
             </div>
@@ -66,21 +60,15 @@
                         <div class="border rounded-3 px-4 py-2">
 
                             <div class="small text-muted">
-
                                 Infrastructure
-
                             </div>
 
-                            <div class="fs-4 fw-bold text-primary">
-
+                            <div class="fs-3 fw-bold text-primary">
                                 {{ infra_count }}
-
                             </div>
 
                             <div class="small text-muted">
-
-                                Detected
-
+                                Technologies Detected
                             </div>
 
                         </div>
@@ -92,21 +80,15 @@
                         <div class="border rounded-3 px-4 py-2">
 
                             <div class="small text-muted">
-
                                 Application Stack
-
                             </div>
 
-                            <div class="fs-4 fw-bold text-success">
-
+                            <div class="fs-3 fw-bold text-success">
                                 {{ app_count }}
-
                             </div>
 
                             <div class="small text-muted">
-
-                                Detected
-
+                                Technologies Detected
                             </div>
 
                         </div>
@@ -128,131 +110,47 @@
         <!-- ===================================== -->
 
         <h6 class="text-uppercase fw-bold text-muted mb-4">
-
             Infrastructure Overview
-
         </h6>
 
         <div class="row g-4">
 
+            <!-- =============================== -->
             <!-- Web Server -->
+            <!-- =============================== -->
 
             <div class="col-lg-3 col-md-6">
 
-                <div class="card border-0 bg-light h-100 shadow-sm">
+                <div class="card tech-card border-0 bg-light h-100 shadow-sm">
 
                     <div class="card-body text-center">
 
                         <i class="fas fa-server fa-2x text-primary mb-3"></i>
 
                         <div class="small text-muted">
-
                             Web Server
-
                         </div>
 
-                        <div class="fw-semibold fs-5 mt-2">
+                        {% if tech.server != "Unknown" %}
 
-                            {{ tech.server }}
+                            <div class="fw-bold fs-5 mt-2">
+                                {{ tech.server }}
+                            </div>
 
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- Powered By -->
-
-            <div class="col-lg-3 col-md-6">
-
-                <div class="card border-0 bg-light h-100 shadow-sm">
-
-                    <div class="card-body text-center">
-
-                        <i class="fas fa-cogs fa-2x text-primary mb-3"></i>
-
-                        <div class="small text-muted">
-
-                            Powered By
-
-                        </div>
-
-                        <div class="fw-semibold fs-6 mt-2">
-
-                            {{ tech.powered_by }}
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- HTTP -->
-
-            <div class="col-lg-3 col-md-6">
-
-                <div class="card border-0 bg-light h-100 shadow-sm">
-
-                    <div class="card-body text-center">
-
-                        <i class="fas fa-globe fa-2x text-primary mb-3"></i>
-
-                        <div class="small text-muted">
-
-                            HTTP Version
-
-                        </div>
-
-                        <div class="fw-semibold fs-5 mt-2">
-
-                            {{ tech.http_version }}
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- Compression -->
-
-            <div class="col-lg-3 col-md-6">
-
-                <div class="card border-0 bg-light h-100 shadow-sm">
-
-                    <div class="card-body text-center">
-
-                        <i class="fas fa-file-archive fa-2x text-primary mb-3"></i>
-
-                        <div class="small text-muted mb-2">
-
-                            Compression
-
-                        </div>
-
-                        {% if tech.compression %}
-
-                            {% for item in tech.compression %}
-
-                                <span class="badge rounded-pill bg-success px-3 py-2">
-
-                                    {{ item }}
-
-                                </span>
-
-                            {% endfor %}
+                            <span class="badge bg-success-subtle text-success border border-success mt-3 px-3 py-2">
+                                <i class="fas fa-check-circle me-1"></i>
+                                Detected
+                            </span>
 
                         {% else %}
 
-                            <span class="text-muted">
+                            <div class="fw-semibold fs-6 text-muted mt-2">
+                                Unknown
+                            </div>
 
-                                Not Detected
-
+                            <span class="badge bg-secondary-subtle text-secondary border border-secondary mt-3 px-3 py-2">
+                                <i class="bi bi-dash-circle-fill me-1"></i>
+                                Not Exposed
                             </span>
 
                         {% endif %}
@@ -263,7 +161,151 @@
 
             </div>
 
+            <!-- =============================== -->
+            <!-- Powered By -->
+            <!-- =============================== -->
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="card tech-card border-0 bg-light h-100 shadow-sm">
+
+                    <div class="card-body text-center">
+
+                        <i class="fas fa-cogs fa-2x text-primary mb-3"></i>
+
+                        <div class="small text-muted">
+                            Powered By
+                        </div>
+
+                        {% if tech.powered_by != "Not Exposed" %}
+
+                            <div class="fw-bold fs-6 mt-2">
+                                {{ tech.powered_by }}
+                            </div>
+
+                            <span class="badge bg-success-subtle text-success border border-success mt-3 px-3 py-2">
+                                <i class="fas fa-check-circle me-1"></i>
+                                Detected
+                            </span>
+
+                        {% else %}
+
+                            <div class="fw-semibold fs-6 text-muted mt-2">
+                                Not Exposed
+                            </div>
+
+                            <span class="badge bg-secondary-subtle text-secondary border border-secondary mt-3 px-3 py-2">
+                                <i class="fas fa-minus-circle me-1"></i>
+                                Hidden
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- =============================== -->
+            <!-- HTTP Version -->
+            <!-- =============================== -->
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="card tech-card border-0 bg-light h-100 shadow-sm">
+
+                    <div class="card-body text-center">
+
+                        <i class="fas fa-globe fa-2x text-primary mb-3"></i>
+
+                        <div class="small text-muted">
+                            HTTP Version
+                        </div>
+
+                        {% if tech.http_version != "Unknown" %}
+
+                            <div class="fw-bold fs-5 mt-2">
+                                {{ tech.http_version }}
+                            </div>
+
+                            <span class="badge bg-success-subtle text-success border border-success mt-3 px-3 py-2">
+                                <i class="fas fa-check-circle me-1"></i>
+                                Detected
+                            </span>
+
+                        {% else %}
+
+                            <div class="fw-semibold fs-6 text-muted mt-2">
+                                Unknown
+                            </div>
+
+                            <span class="badge bg-secondary-subtle text-secondary border border-secondary mt-3 px-3 py-2">
+                                <i class="fas fa-minus-circle me-1"></i>
+                                Not Detected
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+<!-- =============================== -->
+<!-- Compression -->
+<!-- =============================== -->
+
+<div class="col-lg-3 col-md-6">
+
+    <div class="card tech-card border-0 bg-light h-100 shadow-sm">
+
+        <div class="card-body text-center">
+
+            <i class="fas fa-file-archive fa-2x text-primary mb-3"></i>
+
+            <div class="small text-muted">
+                Compression
+            </div>
+
+            {% if tech.compression %}
+
+                <div class="fw-bold fs-5 mt-2 mb-3">
+                    Enabled
+                </div>
+
+                <div class="d-flex flex-wrap justify-content-center gap-2">
+
+                    {% for item in tech.compression %}
+
+                        <span class="badge rounded-pill bg-success px-3 py-2">
+                            {{ item }}
+                        </span>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="fw-bold fs-5 text-muted mt-2 mb-3">
+                    Disabled
+                </div>
+
+                <span class="badge bg-secondary-subtle text-secondary px-3 py-2">
+                    Not Available
+                </span>
+
+            {% endif %}
+
         </div>
+
+    </div>
+
+</div>
+
+</div>
 
         <hr class="my-5">
 
@@ -272,20 +314,18 @@
         <!-- ===================================== -->
 
         <h6 class="text-uppercase fw-bold text-muted mb-4">
-
             Application Technology Stack
-
         </h6>
 
         <div class="row g-4">
 
     <!-- ================================ -->
-    <!-- Backend -->
+    <!-- Backend Technologies -->
     <!-- ================================ -->
 
     <div class="col-lg-6">
 
-        <div class="card border-0 shadow-sm h-100">
+        <div class="card border-0 shadow-sm tech-card h-100">
 
             <div class="card-body">
 
@@ -294,28 +334,29 @@
                     <i class="fas fa-database fa-lg text-primary me-2"></i>
 
                     <h6 class="mb-0 fw-bold">
-
                         Backend Technologies
-
                     </h6>
 
                 </div>
 
                 {% if tech.backend %}
 
-                    <div class="d-flex flex-wrap gap-2">
+                    <div class="d-flex flex-wrap gap-2 mb-3">
 
                         {% for item in tech.backend %}
 
                             <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary px-3 py-2">
-
+                                <i class="fas fa-check-circle me-1"></i>
                                 {{ item }}
-
                             </span>
 
                         {% endfor %}
 
                     </div>
+
+                    <small class="text-success fw-semibold">
+                        {{ tech.backend|length }} technology{{ '' if tech.backend|length == 1 else 'ies' }} detected
+                    </small>
 
                 {% else %}
 
@@ -323,10 +364,12 @@
 
                         <i class="fas fa-server text-muted fa-2x mb-3"></i>
 
-                        <p class="text-muted mb-0">
+                        <h6 class="text-muted mb-2">
+                            No Backend Framework Detected
+                        </h6>
 
-                            No backend framework exposed.
-
+                        <p class="text-muted small mb-0">
+                            The server does not expose backend framework information.
                         </p>
 
                     </div>
@@ -339,13 +382,14 @@
 
     </div>
 
+
     <!-- ================================ -->
-    <!-- Frontend -->
+    <!-- Frontend Technologies -->
     <!-- ================================ -->
 
     <div class="col-lg-6">
 
-        <div class="card border-0 shadow-sm h-100">
+        <div class="card border-0 shadow-sm tech-card h-100">
 
             <div class="card-body">
 
@@ -354,28 +398,29 @@
                     <i class="fas fa-laptop-code fa-lg text-success me-2"></i>
 
                     <h6 class="mb-0 fw-bold">
-
                         Frontend Technologies
-
                     </h6>
 
                 </div>
 
                 {% if tech.frontend %}
 
-                    <div class="d-flex flex-wrap gap-2">
+                    <div class="d-flex flex-wrap gap-2 mb-3">
 
                         {% for item in tech.frontend %}
 
                             <span class="badge rounded-pill bg-success-subtle text-success border border-success px-3 py-2">
-
+                                <i class="fas fa-check-circle me-1"></i>
                                 {{ item }}
-
                             </span>
 
                         {% endfor %}
 
                     </div>
+
+                    <small class="text-success fw-semibold">
+                        {{ tech.frontend|length }} technology{{ '' if tech.frontend|length == 1 else 'ies' }} detected
+                    </small>
 
                 {% else %}
 
@@ -383,10 +428,12 @@
 
                         <i class="fas fa-code text-muted fa-2x mb-3"></i>
 
-                        <p class="text-muted mb-0">
+                        <h6 class="text-muted mb-2">
+                            No Frontend Framework Detected
+                        </h6>
 
-                            No frontend framework exposed.
-
+                        <p class="text-muted small mb-0">
+                            No frontend libraries or frameworks were identified.
                         </p>
 
                     </div>
@@ -400,12 +447,12 @@
     </div>
 
     <!-- ================================ -->
-    <!-- CMS -->
+    <!-- Content Management System -->
     <!-- ================================ -->
 
     <div class="col-lg-6">
 
-        <div class="card border-0 shadow-sm h-100">
+        <div class="card border-0 shadow-sm tech-card h-100">
 
             <div class="card-body">
 
@@ -414,28 +461,29 @@
                     <i class="fas fa-edit fa-lg text-warning me-2"></i>
 
                     <h6 class="mb-0 fw-bold">
-
                         Content Management System
-
                     </h6>
 
                 </div>
 
                 {% if tech.cms %}
 
-                    <div class="d-flex flex-wrap gap-2">
+                    <div class="d-flex flex-wrap gap-2 mb-3">
 
                         {% for item in tech.cms %}
 
                             <span class="badge rounded-pill bg-warning-subtle text-dark border border-warning px-3 py-2">
-
+                                <i class="fas fa-check-circle me-1"></i>
                                 {{ item }}
-
                             </span>
 
                         {% endfor %}
 
                     </div>
+
+                    <small class="text-warning fw-semibold">
+                        {{ tech.cms|length }} CMS platform{{ '' if tech.cms|length == 1 else 's' }} detected
+                    </small>
 
                 {% else %}
 
@@ -443,10 +491,12 @@
 
                         <i class="fas fa-file-alt text-muted fa-2x mb-3"></i>
 
-                        <p class="text-muted mb-0">
+                        <h6 class="text-muted mb-2">
+                            No CMS Detected
+                        </h6>
 
-                            No CMS detected.
-
+                        <p class="text-muted small mb-0">
+                            No content management system could be identified.
                         </p>
 
                     </div>
@@ -459,13 +509,14 @@
 
     </div>
 
+
     <!-- ================================ -->
-    <!-- Analytics -->
+    <!-- Analytics & Tracking -->
     <!-- ================================ -->
 
     <div class="col-lg-6">
 
-        <div class="card border-0 shadow-sm h-100">
+        <div class="card border-0 shadow-sm tech-card h-100">
 
             <div class="card-body">
 
@@ -474,28 +525,29 @@
                     <i class="fas fa-chart-line fa-lg text-danger me-2"></i>
 
                     <h6 class="mb-0 fw-bold">
-
                         Analytics & Tracking
-
                     </h6>
 
                 </div>
 
                 {% if tech.analytics %}
 
-                    <div class="d-flex flex-wrap gap-2">
+                    <div class="d-flex flex-wrap gap-2 mb-3">
 
                         {% for item in tech.analytics %}
 
                             <span class="badge rounded-pill bg-danger-subtle text-danger border border-danger px-3 py-2">
-
+                                <i class="fas fa-check-circle me-1"></i>
                                 {{ item }}
-
                             </span>
 
                         {% endfor %}
 
                     </div>
+
+                    <small class="text-danger fw-semibold">
+                        {{ tech.analytics|length }} analytics tool{{ '' if tech.analytics|length == 1 else 's' }} detected
+                    </small>
 
                 {% else %}
 
@@ -503,10 +555,12 @@
 
                         <i class="fas fa-chart-bar text-muted fa-2x mb-3"></i>
 
-                        <p class="text-muted mb-0">
+                        <h6 class="text-muted mb-2">
+                            No Analytics Detected
+                        </h6>
 
-                            No analytics scripts detected.
-
+                        <p class="text-muted small mb-0">
+                            No analytics or tracking scripts were identified.
                         </p>
 
                     </div>
@@ -521,6 +575,6 @@
 
 </div>
 
-</div>
+    </div>
 
 </div>

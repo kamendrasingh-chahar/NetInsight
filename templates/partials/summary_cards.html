@@ -14,7 +14,7 @@
 
 </div>
 
-{% set score = report.health.data.score %}
+{% set score = report.health.data.score if report.health.success and report.health.data else 0 %}
 
 {% if score >= 90 %}
     {% set health_color = "success" %}
@@ -90,21 +90,23 @@
     </div>
 
 
-    <!-- HTTP -->
+<!-- HTTP -->
 
-    <div class="col-xl-3 col-md-6">
+<div class="col-xl-3 col-md-6">
 
-        <div class="card shadow-sm border-0 rounded-4 h-100 summary-card">
+    <div class="card shadow-sm border-0 rounded-4 h-100 summary-card">
 
-            <div class="card-body text-center py-4">
+        <div class="card-body text-center py-4">
 
-                <i class="bi bi-globe2 text-primary display-5"></i>
+            <i class="bi bi-globe2 text-primary display-5"></i>
 
-                <p class="text-muted small mt-3 mb-2">
+            <p class="text-muted small mt-3 mb-2">
 
-                    HTTP Status
+                HTTP Status
 
-                </p>
+            </p>
+
+            {% if report.http.success and report.http.data %}
 
                 <h1 class="fw-bold mb-1">
 
@@ -148,11 +150,33 @@
 
                 {% endif %}
 
-            </div>
+            {% else %}
+
+                <h2 class="fw-bold text-danger">
+
+                    N/A
+
+                </h2>
+
+                <p class="text-muted small mb-2">
+
+                    HTTP analysis failed
+
+                </p>
+
+                <span class="badge rounded-pill bg-danger">
+
+                    Unreachable
+
+                </span>
+
+            {% endif %}
 
         </div>
 
     </div>
+
+</div>
 
 
     <!-- SSL -->
@@ -171,7 +195,7 @@
 
                 </p>
 
-                {% if report.ssl.success %}
+                {% if report.ssl.success and report.ssl.data %}
 
                     <h2 class="fw-bold text-success">
 
@@ -234,47 +258,71 @@
 
                 </p>
 
-                {% if report.cdn.data.detected %}
+{% if report.cdn.success and report.cdn.data %}
 
-                    <h5 class="fw-bold">
+    {% if report.cdn.data.detected %}
 
-                        {{ report.cdn.data.provider }}
+        <h5 class="fw-bold">
 
-                    </h5>
+            {{ report.cdn.data.provider }}
 
-                    <p class="text-muted small mb-2">
+        </h5>
 
-                        CDN Detected
+        <p class="text-muted small mb-2">
 
-                    </p>
+            CDN Detected
 
-                    <span class="badge rounded-pill bg-info text-dark">
+        </p>
 
-                        {{ report.cdn.data.confidence }} Confidence
+        <span class="badge rounded-pill bg-info text-dark">
 
-                    </span>
+            {{ report.cdn.data.confidence }} Confidence
 
-                {% else %}
+        </span>
 
-                    <h5 class="fw-bold text-secondary">
+    {% else %}
 
-                        Not Detected
+        <h5 class="fw-bold text-secondary">
 
-                    </h5>
+            Not Detected
 
-                    <p class="text-muted small mb-2">
+        </h5>
 
-                        No CDN Identified
+        <p class="text-muted small mb-2">
 
-                    </p>
+            No CDN Identified
 
-                    <span class="badge rounded-pill bg-secondary">
+        </p>
 
-                        Unknown
+        <span class="badge rounded-pill bg-secondary">
 
-                    </span>
+            Unknown
 
-                {% endif %}
+        </span>
+
+    {% endif %}
+
+{% else %}
+
+    <h5 class="fw-bold text-secondary">
+
+        Unknown
+
+    </h5>
+
+    <p class="text-muted small mb-2">
+
+        CDN analysis failed
+
+    </p>
+
+    <span class="badge rounded-pill bg-secondary">
+
+        Unavailable
+
+    </span>
+
+{% endif %}
 
             </div>
 

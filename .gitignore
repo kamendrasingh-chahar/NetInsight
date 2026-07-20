@@ -1,15 +1,26 @@
 # Virtual Environment
 .venv/
+venv/
 
 # Python
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
 
-# Environment
+# Environment Variables
 .env
 
-# VS Code
+# IDE
 .vscode/
+.idea/
 
-# macOS
+# OS
 .DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Build
+dist/
+build/

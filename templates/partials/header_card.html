@@ -1,6 +1,10 @@
-<div class="card shadow-sm border-0 rounded-4 mb-5">
+<div id="headers" class="card shadow-sm border-0 rounded-4 mb-5">
 
     <div class="card-body">
+
+        <!-- ========================= -->
+        <!-- Section Header -->
+        <!-- ========================= -->
 
         <div class="d-flex align-items-center mb-2">
 
@@ -9,15 +13,11 @@
             <div>
 
                 <h2 class="fw-bold mb-0">
-
                     Security Headers
-
                 </h2>
 
                 <p class="text-muted mb-0">
-
-                    HTTP response security header analysis.
-
+                    Review of HTTP response security headers and recommended protections.
                 </p>
 
             </div>
@@ -26,25 +26,33 @@
 
         <hr class="my-4">
 
-        <div class="row g-4">
+            <div class="row g-4">
 
-            {% for header, info in report.security_headers.data.headers.items() %}
+                {% if report.security_headers.success and report.security_headers.data %}
+
+                {% for header, info in report.security_headers.data.headers.items() %}
 
             <div class="col-lg-6">
 
-                <div class="border rounded-4 p-4 h-100">
+                {% if info.present %}
+                <div class="border-start border-4 border-success bg-light rounded-4 p-4 h-100 shadow-sm">
+                {% else %}
+                <div class="border-start border-4 border-danger bg-light rounded-4 p-4 h-100 shadow-sm">
+                {% endif %}
+
+                    <!-- Header Name + Status -->
 
                     <div class="d-flex justify-content-between align-items-start mb-3">
 
                         <div>
 
                             <h5 class="fw-bold mb-1">
-
                                 {{ header }}
-
                             </h5>
 
                             <small class="text-muted">
+
+                                <strong>Why it matters:</strong>
 
                                 {{ info.description }}
 
@@ -54,27 +62,35 @@
 
                         {% if info.present %}
 
-                            <span class="badge bg-success">
+                        <span class="badge bg-success px-3 py-2">
 
-                                Present
+                            <i class="bi bi-check-circle-fill me-1"></i>
 
-                            </span>
+                            Present
+
+                        </span>
 
                         {% else %}
 
-                            <span class="badge bg-danger">
+                        <span class="badge bg-danger px-3 py-2">
 
-                                Missing
+                            <i class="bi bi-x-circle-fill me-1"></i>
 
-                            </span>
+                            Missing
+
+                        </span>
 
                         {% endif %}
 
                     </div>
 
-                    <div class="mb-2">
+                    <hr>
 
-                        <small class="text-uppercase text-muted">
+                    <!-- Header Value Title -->
+
+                    <div class="mb-3">
+
+                        <small class="text-uppercase text-muted fw-semibold">
 
                             Header Value
 
@@ -84,19 +100,40 @@
 
                     {% if info.present %}
 
-                        <code class="d-block bg-light p-2 rounded">
+                        <div class="bg-white border rounded-3 p-3">
 
-                            {{ info.value }}
+                            <code class="d-block text-break">
 
-                        </code>
+                                {{ info.value }}
+
+                            </code>
+
+                        </div>
 
                     {% else %}
 
-                        <span class="text-danger">
+                        <div class="alert alert-warning py-3 mb-0">
 
-                            Missing
+                            <div class="d-flex align-items-start">
 
-                        </span>
+                                <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+
+                                <div>
+
+                                    <strong>Header Not Found</strong>
+
+                                    <div class="small mt-1">
+
+                                        This security header was not returned by the server.
+                                        Adding it can improve the website's security posture.
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
 
                     {% endif %}
 
@@ -104,10 +141,47 @@
 
             </div>
 
-            {% endfor %}
+
+                        {% endfor %}
+
+{% else %}
+
+    <div class="col-12">
+
+        <div class="alert alert-warning border-0 shadow-sm rounded-4">
+
+            <div class="d-flex align-items-center">
+
+                <i class="bi bi-exclamation-triangle-fill fs-3 text-warning me-3"></i>
+
+                <div>
+
+                    <h5 class="mb-1">
+
+                        Security Header Analysis Unavailable
+
+                    </h5>
+
+                    <p class="mb-0 text-muted">
+
+                        NetInsight could not retrieve HTTP security headers for this website.
+                        This usually happens when the website is unreachable or DNS resolution fails.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+{% endif %}
 
         </div>
 
     </div>
 
 </div>
+

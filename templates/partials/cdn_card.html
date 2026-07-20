@@ -1,4 +1,4 @@
-<div class="card shadow-sm border-0 rounded-4 mb-5">
+<div id="cdn" class="card shadow-sm border-0 rounded-4 mb-5">
 
     <div class="card-body">
 
@@ -25,6 +25,8 @@
         </div>
 
         <hr class="my-4">
+
+        {% if report.cdn.success and report.cdn.data %}
 
         <div class="row">
 
@@ -237,6 +239,36 @@
                 No CDN could be detected. Consider using a CDN such as Cloudflare, CloudFront, or Fastly to improve performance, reduce latency, and increase resilience against traffic spikes.
 
             </div>
+
+        {% endif %}
+
+        {% else %}
+
+        <div class="alert alert-warning mb-0">
+
+            <div class="d-flex align-items-center">
+
+                <i class="bi bi-exclamation-triangle-fill fs-2 text-warning me-3"></i>
+
+                <div>
+
+                    <h5 class="fw-bold mb-2">
+
+                        CDN Analysis Unavailable
+
+                    </h5>
+
+                    <p class="mb-0">
+
+                        NetInsight could not determine whether this website is using a Content Delivery Network because the website could not be reached or the analysis could not be completed.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
 
         {% endif %}
 

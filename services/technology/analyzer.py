@@ -105,6 +105,18 @@ class TechnologyAnalyzer:
             for link in self.link_urls
         )
 
+    def _image_contains(self, value):
+        """
+        Search image URLs.
+        """
+
+        value = value.lower()
+
+        return any(
+            value in image
+            for image in self.image_urls
+        )
+
     # --------------------------------------------------
     # HTML Preparation
     # --------------------------------------------------
@@ -125,6 +137,10 @@ class TechnologyAnalyzer:
 
         )
 
+        #
+        # Script URLs
+        #
+
         self.script_urls = [
 
             script.get("src", "").lower()
@@ -135,13 +151,31 @@ class TechnologyAnalyzer:
 
         ]
 
+        #
+        # Stylesheet URLs
+        #
+
         self.link_urls = [
 
             link.get("href", "").lower()
 
-            for link in self.soup.find_all("link")
+         for link in self.soup.find_all("link")
 
             if link.get("href")
+
+        ]
+
+        #
+        # Image URLs
+        #
+
+        self.image_urls = [
+
+            img.get("src", "").lower()
+
+            for img in self.soup.find_all("img")
+
+            if img.get("src")
 
         ]
 
@@ -220,39 +254,155 @@ class TechnologyAnalyzer:
             ""
         ).lower()
 
-        if "php" in powered:
-            self._add("backend", "PHP")
-
-        if "asp.net" in powered:
-            self._add("backend", "ASP.NET")
-
-        if "express" in powered:
-            self._add("backend", "Express.js")
-
-        if "node" in powered:
-            self._add("backend", "Node.js")
-
-        if "django" in powered:
-            self._add("backend", "Django")
-
-        if "flask" in powered:
-            self._add("backend", "Flask")
-
-        if "laravel" in powered:
-            self._add("backend", "Laravel")
+        server = self.headers.get(
+            "Server",
+            ""
+        ).lower()
 
         #
-        # Conservative HTML detection
+        # Header Detection
+        #
+
+        mapping = {
+
+            "php": "PHP",
+
+            "asp.net": "ASP.NET",
+
+            "asp.net core": "ASP.NET Core",
+
+            "express": "Express.js",
+
+            "node": "Node.js",
+
+            "django": "Django",
+
+            "flask": "Flask",
+
+            "laravel": "Laravel",
+
+            "ruby": "Ruby on Rails",
+
+            "rails": "Ruby on Rails",
+
+            "spring": "Spring Boot",
+
+            "fastapi": "FastAPI"
+
+        }
+
+        for keyword, name in mapping.items():
+
+            if keyword in powered:
+
+                self._add(
+                    "backend",
+                    name
+                )
+
+        #
+        # Server Fingerprints
+        #
+
+        if "gunicorn" in server:
+
+            self._add(
+                "backend",
+                "Python"
+            )
+
+        if "uwsgi" in server:
+
+            self._add(
+                "backend",
+                "Python"
+            )
+
+        if "tomcat" in server:
+
+            self._add(
+                "backend",
+                "Java"
+            )
+
+            self._add(
+                "backend",
+                "Spring Boot"
+            )
+
+        if "jetty" in server:
+
+            self._add(
+                "backend",
+                "Java"
+            )
+
+        if "kestrel" in server:
+
+            self._add(
+                "backend",
+                "ASP.NET Core"
+            )
+
+        #
+        # HTML Fingerprints
         #
 
         if self._contains("/wp-json/"):
-            self._add("backend", "PHP")
+
+            self._add(
+                "backend",
+                 "PHP"
+            )
+
+        if self._contains("/wp-content/"):
+
+            self._add(
+                "backend",
+                "PHP"
+            )
+
+        if self._contains("laravel"):
+
+            self._add(
+                "backend",
+                "Laravel"
+            )
 
         if self._contains("django"):
-            self._add("backend", "Django")
+
+            self._add(
+                "backend",
+                "Django"
+            )
 
         if self._contains("__next"):
-            self._add("backend", "Node.js")
+
+            self._add(
+                "backend",
+                "Node.js"
+            )
+
+        if self._contains("/_next/"):
+
+            self._add(
+                "backend",
+                "Node.js"
+            )
+
+        if self._contains("rails"):
+
+            self._add(
+               "backend",
+                "Ruby on Rails"
+            )
+
+        if self._contains("fastapi"):
+
+            self._add(
+                "backend",
+                "FastAPI"
+            )
 
     # --------------------------------------------------
     # CMS Detection
@@ -309,24 +459,86 @@ class TechnologyAnalyzer:
                 elif "squarespace" in content_lower:
                     self._add("cms", "Squarespace")
 
+        
         #
         # WordPress
         #
 
-        if (
+        wordpress_score = 0
 
-            self._contains("/wp-content/")
+        #
+        # Strong fingerprints
+        #
 
-            or self._contains("/wp-includes/")
+        if self._contains("/wp-content/"):
+            wordpress_score += 3
 
-            or self._contains("/wp-json/")
+        if self._contains("/wp-includes/"):
+            wordpress_score += 3
 
-        ):
+        if self._contains("/wp-json/"):
+            wordpress_score += 3
+
+        #
+        # CSS / JS fingerprints
+        #
+
+        if self._script_contains("wp-content"):
+            wordpress_score += 2
+
+        if self._script_contains("wp-includes"):
+            wordpress_score += 2
+
+        if self._link_contains("wp-content"):
+            wordpress_score += 2
+
+        if self._link_contains("wp-includes"):
+            wordpress_score += 2
+
+        #
+        # Image fingerprints
+        #
+
+        if self._image_contains("wp-content"):
+            wordpress_score += 2
+
+#
+# Common WordPress assets
+#
+
+        if self._contains("wp-emoji-release"):
+            wordpress_score += 1
+
+        if self._contains("wp-block-library"):
+            wordpress_score += 1
+
+        if self._contains("wp-embed"):
+            wordpress_score += 1
+
+        if self._contains("xmlrpc.php"):
+            wordpress_score += 1
+
+        #
+        # Final decision
+        #
+
+        if wordpress_score >= 3:
 
             self._add(
                 "cms",
                 "WordPress"
             )
+
+    #
+    # WordPress almost always runs on PHP
+    #
+
+            self._add(
+                "backend",
+                "PHP"
+            )
+
+
 
         #
         # Shopify
@@ -477,6 +689,8 @@ class TechnologyAnalyzer:
 
             or self._contains("tailwind.min.css")
 
+            or self._contains("__TAILWIND_CONFIG__")
+
         ):
 
             self._add(
@@ -493,6 +707,8 @@ class TechnologyAnalyzer:
             self._script_contains("jquery")
 
             or self._contains("jquery.min.js")
+
+            or self._contains("jquery.js")
 
         ):
 
@@ -516,6 +732,8 @@ class TechnologyAnalyzer:
             or self._contains("data-reactroot")
 
             or self._contains("__reactdevtools")
+
+            or self._contains("__reactfiber")
 
         )
 
@@ -624,6 +842,151 @@ class TechnologyAnalyzer:
             self._add(
                 "frontend",
                 "Angular"
+            )
+
+        #
+        # Svelte
+        #
+
+        if (
+
+            self._contains("__SVELTE")
+
+            or self._contains("svelte")
+
+            or self._script_contains("svelte")
+        ):
+
+            self._add(
+                "frontend",
+                "Svelte"
+            )
+
+
+        #
+        # Alpine.js
+        #
+
+        if (
+
+            self._contains("x-data")
+
+            or self._contains("x-show")
+
+            or self._contains("alpinejs")
+
+            or self._script_contains("alpine")
+        ):
+
+            self._add(
+                "frontend",
+                "Alpine.js"
+            )
+
+        #
+        #Material UI
+        #
+
+        if (
+
+            self._contains("mui-")
+
+            or self._contains("@mui")
+
+            or self._contains("material-ui")
+
+        ):
+
+            self._add(
+                "frontend",
+                "Material UI"
+            )
+
+        #
+        # Bulma
+        #
+
+        if (
+
+            self._link_contains("bulma")
+
+            or self._contains("bulma.min.css")
+
+        ):
+
+            self._add(
+                "frontend",
+                "Bulma"
+            )
+
+        #
+        # Foundation
+        #
+
+        if (
+
+            self._link_contains("foundation")
+
+            or self._contains("foundation.min.css")
+
+        ):
+
+            self._add(
+                "frontend",
+                "Foundation"
+            )
+
+        #
+        # Semantic UI
+        #
+
+        if (
+
+            self._contains("semantic.min.css")
+
+            or self._contains("semantic.min.js")
+
+            or self._script_contains("semantic")
+
+        ):
+
+            self._add(
+                "frontend",
+                "Semantic UI"
+            )
+
+        #
+        # Emotion
+        #
+
+        if (
+
+            self._contains("emotion-cache")
+
+            or self._contains("@emotion")
+
+        ):
+
+            self._add(
+                "frontend",
+                "Emotion"
+            )
+
+        #
+        # Styled Components
+        #
+
+        if (
+
+            self._contains("styled-components")
+
+            or self._contains("data-styled")
+
+        ):
+
+            self._add(
+                "frontend",
+                "Styled Components"
             )
 
     # --------------------------------------------------

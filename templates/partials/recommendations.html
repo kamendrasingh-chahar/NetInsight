@@ -2,7 +2,9 @@
 
     <div class="card-body">
 
+        <!-- ================================= -->
         <!-- Header -->
+        <!-- ================================= -->
 
         <div class="d-flex align-items-center mb-3">
 
@@ -18,7 +20,7 @@
 
                 <p class="text-muted mb-0">
 
-                    Suggested improvements to strengthen your infrastructure.
+                    Actionable improvements to strengthen your infrastructure.
 
                 </p>
 
@@ -28,178 +30,432 @@
 
         <hr>
 
-{% if report.recommendations %}
-
-<div class="alert alert-light border mb-4">
-
-    <div class="d-flex justify-content-between align-items-center flex-wrap">
-
-        <div>
-
-            <h6 class="fw-bold mb-1">
-
-                Recommendation Summary
-
-            </h6>
-
-            <small class="text-muted">
-
-                {{ report.recommendation_summary.total }} issue(s) detected
-
-            </small>
-
-        </div>
-
-        <div class="mt-2 mt-md-0">
-
-            {% if report.recommendation_summary.critical %}
-
-                <span class="badge bg-dark me-2">
-
-                    Critical {{ report.recommendation_summary.critical }}
-
-                </span>
-
-            {% endif %}
-
-            {% if report.recommendation_summary.high %}
-
-                <span class="badge bg-danger me-2">
-
-                    High {{ report.recommendation_summary.high }}
-
-                </span>
-
-            {% endif %}
-
-            {% if report.recommendation_summary.medium %}
-
-                <span class="badge bg-warning text-dark me-2">
-
-                    Medium {{ report.recommendation_summary.medium }}
-
-                </span>
-
-            {% endif %}
-
-            {% if report.recommendation_summary.low %}
-
-                <span class="badge bg-info text-dark me-2">
-
-                    Low {{ report.recommendation_summary.low }}
-
-                </span>
-
-            {% endif %}
-
-            {% if report.recommendation_summary.info %}
-
-                <span class="badge bg-success">
-
-                    Info {{ report.recommendation_summary.info }}
-
-                </span>
-
-            {% endif %}
-
-        </div>
-
-    </div>
-
-</div>
-
-{% endif %}
-
         {% if report.recommendations %}
 
-            <div class="list-group list-group-flush">
+        <!-- ================================= -->
+        <!-- Recommendation Overview -->
+        <!-- ================================= -->
 
-                {% for recommendation in report.recommendations %}
+        <div class="row g-4 mb-4">
 
-                <div class="list-group-item py-3">
+            <div class="col-lg-4">
 
-                    {% if recommendation.severity == "Critical" %}
+                <div class="border rounded-4 p-4 h-100 bg-light">
 
-                        <span class="badge bg-danger me-2">
+                    <small class="text-uppercase text-muted">
+
+                        Issues Found
+
+                    </small>
+
+                    <h1 class="display-4 fw-bold mt-2 mb-0">
+
+                        {{ report.recommendation_summary.total }}
+
+                    </h1>
+
+                    <p class="text-muted mb-0">
+
+                        Recommendation(s)
+
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-8">
+
+                <div class="border rounded-4 p-4 h-100">
+
+                    <h6 class="fw-bold mb-3">
+
+                        Severity Distribution
+
+                    </h6>
+
+                    <div class="d-flex flex-wrap gap-2">
+
+                        {% if report.recommendation_summary.critical %}
+
+                        <span class="badge bg-dark fs-6 px-3 py-2">
 
                             Critical
+                            {{ report.recommendation_summary.critical }}
 
                         </span>
 
-                    {% elif recommendation.severity == "High" %}
+                        {% endif %}
 
-                        <span class="badge bg-danger me-2">
+                        {% if report.recommendation_summary.high %}
+
+                        <span class="badge bg-danger fs-6 px-3 py-2">
 
                             High
+                            {{ report.recommendation_summary.high }}
 
                         </span>
 
-                    {% elif recommendation.severity == "Medium" %}
+                        {% endif %}
 
-                        <span class="badge bg-warning text-dark me-2">
+                        {% if report.recommendation_summary.medium %}
+
+                        <span class="badge bg-warning text-dark fs-6 px-3 py-2">
 
                             Medium
+                            {{ report.recommendation_summary.medium }}
 
                         </span>
 
-                    {% elif recommendation.severity == "Low" %}
+                        {% endif %}
 
-                        <span class="badge bg-info text-dark me-2">
+                        {% if report.recommendation_summary.low %}
+
+                        <span class="badge bg-info text-dark fs-6 px-3 py-2">
 
                             Low
+                            {{ report.recommendation_summary.low }}
 
                         </span>
 
-                    {% else %}
+                        {% endif %}
 
-                        <span class="badge bg-success me-2">
+                        {% if report.recommendation_summary.info %}
+
+                        <span class="badge bg-success fs-6 px-3 py-2">
 
                             Info
+                            {{ report.recommendation_summary.info }}
 
                         </span>
 
-                    {% endif %}
-
-                    <strong>
-
-                        {{ recommendation.issue }}
-
-                    </strong>
-
-                    <div class="small text-muted mt-1">
-
-                        {{ recommendation.recommendation }}
-
-                    </div>
-
-                    <div class="small mt-2">
-
-                        <strong>
-
-                            Impact:
-
-                        </strong>
-
-                        {{ recommendation.impact }}
+                        {% endif %}
 
                     </div>
 
                 </div>
 
+            </div>
+
+        </div>
+
+        <!-- ================================= -->
+        <!-- Affected Components -->
+        <!-- ================================= -->
+
+        <div class="border rounded-4 p-4 mb-4">
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+
+                <div>
+
+                    <h5 class="fw-bold mb-1">
+
+                        Affected Components
+
+                    </h5>
+
+                    <p class="text-muted mb-0">
+
+                        Jump directly to the sections requiring attention.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+            <hr>
+
+            <div class="d-flex flex-wrap gap-2">
+
+                {% set categories = [] %}
+
+                {% for recommendation in report.recommendations %}
+
+                    {% if recommendation.category not in categories %}
+
+                        {% if categories.append(recommendation.category) %}{% endif %}
+
+                        {% if recommendation.category == "SSL" %}
+
+                            <a href="#ssl"
+                               class="btn btn-outline-danger">
+
+                                🔒 SSL
+
+                            </a>
+
+                        {% elif recommendation.category == "Security Headers" %}
+
+                            <a href="#headers"
+                               class="btn btn-outline-warning">
+
+                                🛡 Security Headers
+
+                            </a>
+
+                        {% elif recommendation.category == "HTTP" %}
+
+                            <a href="#http"
+                               class="btn btn-outline-primary">
+
+                                🌍 HTTP
+
+                            </a>
+
+                        {% elif recommendation.category == "Performance" %}
+
+                            <a href="#http"
+                               class="btn btn-outline-info">
+
+                                ⚡ Performance
+
+                            </a>
+
+                        {% elif recommendation.category == "DNS" %}
+
+                            <a href="#dns"
+                               class="btn btn-outline-success">
+
+                                🌐 DNS
+
+                            </a>
+
+                        {% elif recommendation.category == "Email Security" %}
+
+                            <a href="#email"
+                               class="btn btn-outline-secondary">
+
+                                📧 Email Security
+
+                            </a>
+
+                        {% elif recommendation.category == "IP Hosting" %}
+
+                            <a href="#hosting"
+                               class="btn btn-outline-dark">
+
+                                🖥 IP Hosting
+
+                            </a>
+
+                        {% endif %}
+
+                    {% endif %}
+
                 {% endfor %}
 
             </div>
 
+        </div>
+
+        <!-- ================================= -->
+        <!-- View Report -->
+        <!-- ================================= -->
+
+        <div class="text-center mb-5">
+
+            <a href="#dns"
+
+               class="btn btn-primary btn-lg px-5">
+
+                <i class="bi bi-arrow-down-circle me-2"></i>
+
+                View Detailed Infrastructure Report
+
+            </a>
+
+        </div>
+
+        <hr>
+
+        <!-- ================================= -->
+        <!-- Detailed Recommendations -->
+        <!-- ================================= -->
+
+        <div class="mb-4">
+
+            <h4 class="fw-bold">
+
+                Detailed Recommendations
+
+            </h4>
+
+            <p class="text-muted mb-0">
+
+                Review each finding below along with its impact and recommended remediation.
+
+            </p>
+
+        </div>
+
+        <div class="list-group list-group-flush">
+
+
+            {% for recommendation in report.recommendations %}
+
+            <div class="list-group-item border-0 px-0 py-4">
+
+                <div class="card border rounded-4 shadow-sm">
+
+                    <div class="card-body">
+
+                        <!-- Header -->
+
+                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+
+                            <div class="d-flex align-items-center flex-wrap gap-2">
+
+                                <!-- Severity -->
+
+                                {% if recommendation.severity == "Critical" %}
+
+                                    <span class="badge bg-dark">
+
+                                        Critical
+
+                                    </span>
+
+                                {% elif recommendation.severity == "High" %}
+
+                                    <span class="badge bg-danger">
+
+                                        High
+
+                                    </span>
+
+                                {% elif recommendation.severity == "Medium" %}
+
+                                    <span class="badge bg-warning text-dark">
+
+                                        Medium
+
+                                    </span>
+
+                                {% elif recommendation.severity == "Low" %}
+
+                                    <span class="badge bg-info text-dark">
+
+                                        Low
+
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-success">
+
+                                        Info
+
+                                    </span>
+
+                                {% endif %}
+
+                                <!-- Category -->
+
+                                <span class="badge bg-light text-dark border">
+
+                                    {{ recommendation.category }}
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Issue -->
+
+                        <h5 class="fw-bold mb-3">
+
+                            {{ recommendation.issue }}
+
+                        </h5>
+
+                        <!-- Recommendation -->
+
+                        <div class="mb-3">
+
+                            <div class="small text-uppercase text-muted fw-semibold mb-1">
+
+                                Recommended Action
+
+                            </div>
+
+                            <div>
+
+                                {{ recommendation.recommendation }}
+
+                            </div>
+
+                        </div>
+
+                        <!-- Impact -->
+
+                        <div class="alert alert-light border mb-0">
+
+                            <div class="fw-semibold mb-1">
+
+                                <i class="bi bi-exclamation-circle text-danger me-2"></i>
+
+                                Impact
+
+                            </div>
+
+                            <div class="small">
+
+                                {{ recommendation.impact }}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
         {% else %}
 
-            <div class="alert alert-success mb-0">
+        <!-- ================================= -->
+        <!-- No Recommendations -->
+        <!-- ================================= -->
+
+        <div class="text-center py-5">
+
+            <div class="display-1 text-success mb-3">
+
+                <i class="bi bi-patch-check-fill"></i>
+
+            </div>
+
+            <h3 class="fw-bold text-success">
+
+                Excellent!
+
+            </h3>
+
+            <p class="text-muted mb-4">
+
+                No recommendations were generated.
+
+                Your infrastructure appears to follow current best practices.
+
+            </p>
+
+            <div class="alert alert-success d-inline-flex align-items-center px-4 py-3 mb-0">
 
                 <i class="bi bi-check-circle-fill me-2"></i>
 
-                Excellent! No recommendations were generated.
-                Your infrastructure follows current best practices.
+                Infrastructure health check completed successfully.
 
             </div>
+
+        </div>
 
         {% endif %}
 

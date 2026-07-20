@@ -1,80 +1,583 @@
-body {
+html,
+body{
 
-    min-height: 100vh;
-
-    background: linear-gradient(180deg, #f8fafc 0%, #eef4ff 100%);
-
-    font-family: Arial, Helvetica, sans-serif;
+    height:100%;
 
 }
 
+body{
+
+    min-height:100vh;
+
+    display:flex;
+
+    flex-direction:column;
+
+    background:linear-gradient(180deg,#f8fafc 0%,#eef4ff 100%);
+
+    font-family:Arial,Helvetica,sans-serif;
+
+    scroll-behavior:smooth;
+
+}
+
+main{
+
+    flex:1;
+
+}
+
+/* ===========================
+   Landing Page
+=========================== */
+
 .hero {
-
     max-width: 850px;
-
     margin: auto;
-
-    padding-top: 120px;
-
+    padding-top: 80px;
     text-align: center;
-
 }
 
 .description {
-
     color: #6c757d;
-
     margin-top: 20px;
-
     margin-bottom: 40px;
-
 }
 
 .input-group {
-
     box-shadow: 0 8px 20px rgba(0,0,0,.08);
-
 }
 
+/* ===========================
+   Navbar
+=========================== */
+
 .navbar-brand {
-
     font-size: 1.5rem;
-
 }
 
 .nav-link {
-
     color: #555 !important;
-
     margin-left: 20px;
-
+    transition: .25s;
 }
 
 .nav-link:hover {
-
     color: #0d6efd !important;
-
 }
 
+/* ===========================
+   Summary Cards
+=========================== */
+
 .summary-card {
-
     min-height: 250px;
-
-    transition: all .25s ease;
-
+    transition: .3s ease;
+    border-radius: 20px;
 }
 
 .summary-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 1rem 2rem rgba(0,0,0,.12) !important;
+}
 
-    transform: translateY(-6px);
+.summary-card:hover i {
+    transform: scale(1.12);
+}
 
-    box-shadow: 0 .8rem 1.8rem rgba(0,0,0,.12) !important;
+.summary-card i {
+    transition: .3s;
+}
+
+/* ===========================
+   Report Cards
+=========================== */
+
+.card {
+    border-radius: 18px;
+    transition: .25s ease;
+}
+
+.card:hover {
+    box-shadow: 0 .75rem 1.75rem rgba(0,0,0,.08);
+}
+
+/* ===========================
+   Section Anchors
+=========================== */
+
+.section-anchor {
+    scroll-margin-top: 160px;
+}
+
+/* ===========================
+   Quick Navigation
+=========================== */
+
+.quick-nav {
+    position: sticky;
+    top: 0px;
+    z-index: 100;
+    background: white;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.08);
+    margin-bottom: 40px;
+}
+
+.quick-nav h5 {
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.quick-nav .btn {
+    margin: 6px;
+    border-radius: 30px;
+    transition: .25s;
+}
+
+.quick-nav .btn:hover {
+    transform: translateY(-2px);
+}
+
+/* ===========================
+   Tables
+=========================== */
+
+.table th {
+    width: 35%;
+    color: #555;
+}
+
+/* ===========================
+   Progress Bars
+=========================== */
+
+.progress {
+    height: 12px;
+    border-radius: 50px;
+}
+
+/* ===========================
+   Accordion
+=========================== */
+
+.accordion-button {
+    font-weight: 600;
+}
+
+.accordion-button:not(.collapsed) {
+    background: #eef4ff;
+    color: #0d6efd;
+}
+
+/* ===========================
+   Alerts
+=========================== */
+
+.alert {
+    border-radius: 16px;
+}
+
+/* ===========================
+   Badges
+=========================== */
+
+.badge {
+    font-weight: 600;
+}
+
+/* ===========================
+   Code Blocks
+=========================== */
+
+code {
+    word-break: break-word;
+}
+
+/* ===========================
+   Buttons
+=========================== */
+
+.btn {
+    transition: .25s;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+/* ===========================
+   Footer Spacing
+=========================== */
+
+.report-section {
+    margin-bottom: 45px;
+}
+
+/* ===========================
+   Mobile
+=========================== */
+
+@media (max-width:768px){
+
+.hero{
+    padding-top:80px;
+}
+
+.summary-card{
+    min-height:auto;
+}
+
+.quick-nav{
+    position:relative;
+    top:0;
+}
+
+.table th{
+    width:45%;
+}
+
+}
+
+#headers .border-start{
+    transition: all .25s ease;
+}
+
+#headers .border-start:hover{
+    transform: translateY(-4px);
+    box-shadow: 0 .75rem 1.5rem rgba(0,0,0,.08);
+}
+
+#headers code{
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-size: .9rem;
+}
+
+/* ===========================
+   Technology Cards
+=========================== */
+
+.tech-card{
+    transition: all .25s ease;
+}
+
+.tech-card:hover{
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 2rem rgba(0,0,0,.10) !important;
+}
+
+.tech-card .badge{
+    font-weight:600;
+}
+
+.tech-card .card-body{
+    display:flex;
+    flex-direction:column;
+}
+
+.tech-card small.fw-semibold{
+    margin-top:auto;
+}
+
+/* ===========================
+   Loading Screen
+=========================== */
+
+#loadingOverlay{
+
+    position:fixed;
+
+    inset:0;
+
+    display:none;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:rgba(248,250,252,.96);
+
+    backdrop-filter:blur(6px);
+
+    z-index:99999;
+
+    animation:fadeIn .35s ease;
+
+}
+
+.loading-card{
+
+    width:600px;
+
+    max-width:92%;
+
+    background:#ffffff;
+
+    border-radius:24px;
+
+    padding:55px;
+
+    text-align:center;
+
+    box-shadow:0 30px 70px rgba(0,0,0,.15);
+
+    border:1px solid rgba(13,110,253,.08);
+
+}
+
+.loading-icon-wrapper{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    margin-bottom:20px;
+
+}
+
+.loading-icon{
+
+    font-size:4rem;
+
+    color:#0d6efd;
+
+    animation:pulseCPU 1.8s ease-in-out infinite;
+
+}
+
+.loading-card h2{
+
+    font-weight:700;
+
+    margin-bottom:8px;
+
+}
+
+.loading-card h5{
+
+    font-weight:700;
+
+}
+
+.loading-card .progress{
+
+    height:15px;
+
+    border-radius:50px;
+
+    overflow:hidden;
+
+    background:#e9ecef;
+
+    margin-top:10px;
+
+}
+
+.loading-card .progress-bar{
+
+    border-radius:50px;
+
+}
+
+.loading-list{
+
+    margin-top:30px;
+
+    line-height:2.15;
+
+    font-size:.98rem;
+
+    color:#495057;
+
+}
+
+.loading-list div{
+
+    display:flex;
+
+    align-items:center;
+
+}
+
+.loading-list i{
+
+    width:24px;
+
+    color:#0d6efd;
+
+}
+
+.loading-footer{
+
+    margin-top:30px;
+
+}
+
+.loading-footer p{
+
+    font-size:.95rem;
+
+    line-height:1.6;
+
+}
+
+.loading-footer small{
+
+    font-size:.85rem;
+
+}
+
+/* ===========================
+   Animations
+=========================== */
+
+@keyframes pulseCPU{
+
+0%{
+
+transform:scale(1);
+
+opacity:1;
+
+}
+
+50%{
+
+transform:scale(1.12);
+
+opacity:.85;
+
+}
+
+100%{
+
+transform:scale(1);
+
+opacity:1;
+
+}
+
+}
+
+@keyframes fadeIn{
+
+from{
+
+opacity:0;
+
+}
+
+to{
+
+opacity:1;
+
+}
+
+}
+
+/* ===========================
+   Mobile
+=========================== */
+
+@media (max-width:768px){
+
+.loading-card{
+
+    width:95%;
+
+    padding:35px 25px;
+
+}
+
+.loading-icon{
+
+    font-size:3rem;
+
+}
+
+.loading-list{
+
+    font-size:.92rem;
+
+    line-height:1.9;
+
+}
+
+.loading-card h2{
+
+    font-size:1.7rem;
+
+}
+
+.loading-card h5{
+
+    font-size:1.1rem;
+
+}
+
+.footer{
+
+    text-align:center;
+
+}
+
+.footer .text-lg-end{
+
+    text-align:center !important;
+
+    margin-top:15px;
 
 }
 
 
-.summary-card:hover i{
+}
 
-    transform:scale(1.12);
+/* ===========================
+   Footer
+=========================== */
+
+.footer{
+
+    margin-top:auto;
+
+    padding:22px 0;
+
+    background:#ffffff;
+
+    border-top:1px solid #e9ecef;
+
+}
+
+.footer h5{
+
+    margin-bottom:6px;
+
+    font-size:1.15rem;
+
+}
+
+.footer p{
+
+    font-size:.95rem;
+
+}
+
+.footer small{
+
+    font-size:.88rem;
+
+    color:#6c757d;
+
+}
+
+.footer .badge{
+
+    font-size:.78rem;
+
+    font-weight:600;
 
 }
