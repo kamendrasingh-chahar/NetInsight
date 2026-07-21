@@ -3,6 +3,8 @@ import requests
 
 from bs4 import BeautifulSoup
 
+from services.common.webpage_fetcher import WebPageFetcher
+
 from utils.response import success_response, error_response
 
 
@@ -121,63 +123,7 @@ class TechnologyAnalyzer:
     # HTML Preparation
     # --------------------------------------------------
 
-    def _prepare_document(self):
 
-        self.headers = self.response.headers
-
-        self.html = self.response.text
-
-        self.html_lower = self.html.lower()
-
-        self.soup = BeautifulSoup(
-
-            self.html,
-
-            "html.parser"
-
-        )
-
-        #
-        # Script URLs
-        #
-
-        self.script_urls = [
-
-            script.get("src", "").lower()
-
-            for script in self.soup.find_all("script")
-
-            if script.get("src")
-
-        ]
-
-        #
-        # Stylesheet URLs
-        #
-
-        self.link_urls = [
-
-            link.get("href", "").lower()
-
-         for link in self.soup.find_all("link")
-
-            if link.get("href")
-
-        ]
-
-        #
-        # Image URLs
-        #
-
-        self.image_urls = [
-
-            img.get("src", "").lower()
-
-            for img in self.soup.find_all("img")
-
-            if img.get("src")
-
-        ]
 
     # --------------------------------------------------
     # Server Detection
@@ -1189,25 +1135,28 @@ class TechnologyAnalyzer:
 
         try:
 
-            self.response = requests.get(
+            page = WebPageFetcher(self.domain).fetch()
 
-                self.url,
+            if not page["success"]:
+                return page
 
-                timeout=10,
+            data = page["data"]
 
-                allow_redirects=True,
+            self.response = data["response"]
 
-                headers={
+            self.headers = data["headers"]
 
-                    "User-Agent": (
-                        "NetInsight Technology Scanner"
-                    )
+            self.html = data["html"]
 
-                }
+            self.html_lower = data["html_lower"]
 
-            )
+            self.soup = data["soup"]
 
-            self._prepare_document()
+            self.script_urls = data["script_urls"]
+
+            self.link_urls = data["link_urls"]
+
+            self.image_urls = data["image_urls"]
 
             #
             # Detection Pipeline

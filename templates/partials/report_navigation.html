@@ -1,0 +1,185 @@
+<div class="card shadow-sm border-0 rounded-4 mb-5">
+
+    <div class="card-body">
+
+        <!-- ================================= -->
+        <!-- Recommendation CTA -->
+        <!-- ================================= -->
+
+        {% set summary = report.recommendation_summary %}
+
+        {% if summary.total > 0 %}
+
+            {% if summary.critical > 0 or summary.high > 0 %}
+                {% set alert_class = "danger" %}
+                {% set icon = "bi-exclamation-triangle-fill" %}
+            {% elif summary.medium > 0 %}
+                {% set alert_class = "warning" %}
+                {% set icon = "bi-exclamation-circle-fill" %}
+            {% else %}
+                {% set alert_class = "primary" %}
+                {% set icon = "bi-info-circle-fill" %}
+            {% endif %}
+
+            <div class="alert alert-{{ alert_class }} border-0 shadow-sm mb-4">
+
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+                    <div>
+
+                        <h5 class="fw-bold mb-1">
+
+                            <i class="bi {{ icon }} me-2"></i>
+
+                            {{ summary.total }} Recommendation{{ '' if summary.total == 1 else 's' }} Require Your Attention
+
+                        </h5>
+
+                        <p class="mb-0">
+
+                            Review the recommended actions before exploring the detailed infrastructure analysis.
+
+                        </p>
+
+                    </div>
+
+                    <a href="#recommendations"
+                       class="btn btn-{{ alert_class }}">
+
+                        <i class="bi bi-arrow-down-circle me-2"></i>
+
+                        View Recommendations
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        {% else %}
+
+            <div class="alert alert-success border-0 shadow-sm mb-4">
+
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+                    <div>
+
+                        <h5 class="fw-bold mb-1">
+
+                            <i class="bi bi-patch-check-fill me-2"></i>
+
+                            No Recommendations Generated
+
+                        </h5>
+
+                        <p class="mb-0">
+
+                            Great! Your infrastructure follows current best practices.
+
+                        </p>
+
+                    </div>
+
+                    <span class="badge bg-success fs-6 px-3 py-2">
+
+                        Healthy
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+        <!-- ================================= -->
+        <!-- Analysis Index -->
+        <!-- ================================= -->
+
+        <div class="d-flex align-items-center mb-3">
+
+            <i class="bi bi-grid-3x3-gap-fill text-primary fs-2 me-3"></i>
+
+            <div>
+
+                <h3 class="fw-bold mb-0">
+
+                    Analysis Index
+
+                </h3>
+
+                <p class="text-muted mb-0">
+
+                    Jump directly to any infrastructure analysis section.
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <hr>
+
+        <div class="row g-3">
+
+            <div class="col-lg-4 col-md-6">
+                <a href="#dns" class="btn btn-outline-primary w-100 py-3">🌐 DNS Analysis</a>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <a href="#whois" class="btn btn-outline-primary w-100 py-3">👤 WHOIS Information</a>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <a href="#hosting" class="btn btn-outline-primary w-100 py-3">🖥 IP & Hosting</a>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <a href="#ssl" class="btn btn-outline-success w-100 py-3">🔒 SSL Certificate</a>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <a href="#http" class="btn btn-outline-info w-100 py-3">🌍 HTTP Details</a>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <a href="#headers" class="btn btn-outline-warning w-100 py-3">🛡 Security Headers</a>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <a href="#cdn" class="btn btn-outline-secondary w-100 py-3">☁ CDN Analysis</a>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <a href="#email" class="btn btn-outline-dark w-100 py-3">📧 Email Security</a>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <a href="#technology" class="btn btn-outline-primary w-100 py-3">⚙ Technology Detection</a>
+            </div>
+
+        </div>
+
+        <hr>
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap">
+
+            <small class="text-muted">
+
+                Click any section to jump directly to the detailed analysis.
+
+            </small>
+
+            <span class="badge bg-success px-3 py-2">
+
+                <i class="bi bi-check-circle-fill me-1"></i>
+
+                9 Analysis Sections
+
+            </span>
+
+        </div>
+
+    </div>
+
+</div>

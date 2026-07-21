@@ -3,6 +3,8 @@ import dns.resolver
 
 from collections import defaultdict
 
+from services.common.webpage_fetcher import WebPageFetcher
+
 from utils.response import success_response, error_response
 
 
@@ -160,14 +162,12 @@ class CDNDetector:
 
         try:
 
-            response = requests.get(
-                f"https://{self.domain}",
-                timeout=5,
-                allow_redirects=True,
-                headers={
-                    "User-Agent": "NetInsight/1.0"
-                }
-            )
+            page = WebPageFetcher(self.domain).fetch()
+
+            if not page["success"]:
+                return scores, methods, evidence
+
+            response = page["data"]["response"]
 
             headers = {
                 key.lower(): value.lower()
