@@ -1,29 +1,69 @@
 import requests
 import dns.resolver
 
+from collections import defaultdict
+
 from utils.response import success_response, error_response
 
 
 class CDNDetector:
     """
-    Detects whether a website is using a CDN.
+    Detects whether a website is using a Content Delivery Network (CDN)
+    using HTTP response headers, Server header, and DNS records.
     """
 
     HTTP_PATTERNS = {
 
         "Cloudflare": [
             "cf-ray",
-            "cf-cache-status"
+            "cf-cache-status",
+            "server: cloudflare"
         ],
 
         "CloudFront": [
-            "x-amz-cf-id"
+            "x-amz-cf-id",
+            "x-amz-cf-pop"
         ],
 
         "Fastly": [
-            "x-served-by"
-        ]
+            "x-served-by",
+            "fastly-debug"
+        ],
 
+        "Akamai": [
+            "akamai",
+            "akamai-grn",
+            "x-akamai"
+        ],
+
+        "Azure Front Door": [
+            "x-azure-ref"
+        ],
+
+        "Google": [
+            "alt-svc",
+            "server: gws",
+            "server: google frontend"
+        ],
+
+        "Imperva": [
+            "x-iinfo",
+            "x-cdn"
+        ],
+
+        "Sucuri": [
+            "x-sucuri-id",
+            "x-sucuri-cache"
+        ],
+
+        "BunnyCDN": [
+            "cdn-pull",
+            "bunnycdn"
+        ],
+
+        "KeyCDN": [
+            "x-edge-location"
+        ]
     }
 
     DNS_PATTERNS = {
@@ -50,27 +90,83 @@ class CDNDetector:
             "azureedge.net"
         ],
 
+        "Azure Front Door": [
+            "afd.azureedge.net"
+        ],
+
         "CacheFly": [
             "cachefly.net"
-        ]
+        ],
 
+        "StackPath": [
+            "stackpathdns.com"
+        ],
+
+        "KeyCDN": [
+            "kxcdn.com"
+        ],
+
+        "BunnyCDN": [
+            "b-cdn.net"
+        ],
+
+        "G-Core": [
+            "gcorelabs.net"
+        ],
+
+        "Imperva": [
+            "incapdns.net"
+        ]
     }
 
     def __init__(self, domain: str):
         self.domain = domain
 
+    def _add_detection(
+        self,
+        scores,
+        evidence,
+        methods,
+        provider,
+        method,
+        detail,
+        weight
+    ):
+        """
+        Adds weighted evidence for a CDN provider.
+        """
+
+        scores[provider] += weight
+
+        methods[provider].add(method)
+
+        evidence[provider].append(detail)
+
+    def _calculate_confidence(self, score: int):
+
+        if score >= 6:
+            return "High"
+
+        if score >= 3:
+            return "Medium"
+
+        return "Low"
+
     def _check_http_headers(self):
 
-        detected_provider = None
-        evidence = []
-        methods = []
+        scores = defaultdict(int)
+        evidence = defaultdict(list)
+        methods = defaultdict(set)
 
         try:
 
             response = requests.get(
                 f"https://{self.domain}",
                 timeout=5,
-                allow_redirects=True
+                allow_redirects=True,
+                headers={
+                    "User-Agent": "NetInsight/1.0"
+                }
             )
 
             headers = {
@@ -78,32 +174,73 @@ class CDNDetector:
                 for key, value in response.headers.items()
             }
 
+            server = headers.get("server", "").lower()
+
             for provider, patterns in self.HTTP_PATTERNS.items():
 
                 for pattern in patterns:
 
+                    # Match header names
+                    for header in headers.keys():
+
+                        if pattern == header:
+
+                            self._add_detection(
+                                scores,
+                                evidence,
+                                methods,
+                                provider,
+                                "HTTP Header",
+                                header,
+                                3
+                            )
+
+                    # Match header values
                     for header, value in headers.items():
 
-                        if pattern in header or pattern in value:
+                        if pattern in value:
 
-                            detected_provider = provider
+                            self._add_detection(
+                                scores,
+                                evidence,
+                                methods,
+                                provider,
+                                "HTTP Header",
+                                f"{header}: {value}",
+                                2
+                            )
 
-                            methods.append("HTTP Header")
+                    # Explicit Server header check
+                    if pattern.startswith("server:"):
 
-                            evidence.append(
-                                f"{header}: {value}"
+                        expected = pattern.replace("server:", "").strip()
+
+                        if expected in server:
+
+                            self._add_detection(
+                                scores,
+                                evidence,
+                                methods,
+                                provider,
+                                "Server Header",
+                                server,
+                                3
                             )
 
         except Exception:
             pass
 
-        return detected_provider, methods, evidence
+        return scores, methods, evidence
 
     def _check_dns(self):
 
-        detected_provider = None
-        evidence = []
-        methods = []
+        scores = defaultdict(int)
+        evidence = defaultdict(list)
+        methods = defaultdict(set)
+
+        # -----------------------------
+        # Check CNAME
+        # -----------------------------
 
         try:
 
@@ -122,55 +259,146 @@ class CDNDetector:
 
                     if pattern in cname:
 
-                        detected_provider = provider
-
-                        methods.append("DNS CNAME")
-
-                        evidence.append(cname)
+                        self._add_detection(
+                            scores,
+                            evidence,
+                            methods,
+                            provider,
+                            "DNS CNAME",
+                            cname,
+                            3
+                        )
 
         except Exception:
             pass
 
-        return detected_provider, methods, evidence
+        # -----------------------------
+        # Check A Records
+        # -----------------------------
+
+        try:
+
+            answers = dns.resolver.resolve(
+                self.domain,
+                "A"
+            )
+
+            for record in answers:
+
+                ip = str(record)
+
+                evidence["IP Address"].append(ip)
+
+        except Exception:
+            pass
+
+        # -----------------------------
+        # Check AAAA Records
+        # -----------------------------
+
+        try:
+
+            answers = dns.resolver.resolve(
+                self.domain,
+                "AAAA"
+            )
+
+            for record in answers:
+
+                ip = str(record)
+
+                evidence["IPv6"].append(ip)
+
+        except Exception:
+            pass
+
+        return scores, methods, evidence
 
     def analyze(self):
 
-        http_provider, http_methods, http_evidence = self._check_http_headers()
+        http_scores, http_methods, http_evidence = self._check_http_headers()
 
-        dns_provider, dns_methods, dns_evidence = self._check_dns()
+        dns_scores, dns_methods, dns_evidence = self._check_dns()
 
-        provider = http_provider or dns_provider
+        # -----------------------------
+        # Merge Results
+        # -----------------------------
 
-        methods = list(
-            dict.fromkeys(
-                http_methods + dns_methods
-            )
+        providers = set(
+            list(http_scores.keys()) +
+            list(dns_scores.keys())
         )
 
-        evidence = http_evidence + dns_evidence
+        final_scores = {}
 
-        if http_provider and dns_provider:
+        final_methods = {}
 
-            confidence = "High"
+        final_evidence = {}
 
-        elif http_provider or dns_provider:
+        for provider in providers:
 
-            confidence = "Medium"
+            final_scores[provider] = (
+                http_scores.get(provider, 0)
+                +
+                dns_scores.get(provider, 0)
+            )
 
-        else:
+            final_methods[provider] = list(
+                http_methods.get(provider, set())
+                |
+                dns_methods.get(provider, set())
+            )
 
-            confidence = "Low"
+            final_evidence[provider] = (
+                http_evidence.get(provider, [])
+                +
+                dns_evidence.get(provider, [])
+            )
+
+        # -----------------------------
+        # No CDN Detected
+        # -----------------------------
+
+        if not final_scores:
+
+            return success_response({
+
+                "detected": False,
+
+                "provider": "Unknown",
+
+                "confidence": "Low",
+
+                "detected_via": [],
+
+                "evidence": []
+
+            })
+
+        # -----------------------------
+        # Highest Score Wins
+        # -----------------------------
+
+        provider = max(
+            final_scores,
+            key=final_scores.get
+        )
+
+        score = final_scores[provider]
+
+        confidence = self._calculate_confidence(score)
 
         return success_response({
 
-            "detected": provider is not None,
+            "detected": True,
 
-            "provider": provider if provider else "Unknown",
+            "provider": provider,
 
             "confidence": confidence,
 
-            "detected_via": methods,
+            "detected_via": final_methods[provider],
 
-            "evidence": evidence
+            "evidence": final_evidence[provider]
 
         })
+

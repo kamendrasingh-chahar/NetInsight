@@ -58,54 +58,96 @@ class EmailSecurityAnalyzer:
         self.domain = domain
         self.dns = dns_records
 
-    def _has_mx(self):
+    def _get_mx_records(self):
         """
-        Checks whether MX records exist.
+        Returns all MX records.
         """
 
-        return len(self.dns.get("MX", [])) > 0
+        records = []
 
-    def _has_spf(self):
+        for mx in self.dns.get("MX", []):
+
+            try:
+
+                parts = mx.split(maxsplit=1)
+
+                if len(parts) == 2:
+
+                    records.append({
+
+                        "priority": int(parts[0]),
+
+                        "exchange": parts[1]
+
+                    })
+
+                else:
+
+                    records.append({
+
+                        "priority": "-",
+
+                        "exchange": mx
+
+                    })
+
+            except Exception:
+
+                    records.append({
+
+                        "priority": "-",
+
+                        "exchange": mx
+
+                    })
+
+            return records
+
+    def _get_spf_record(self):
         """
-        Checks whether an SPF record exists.
+        Returns the SPF record.
         """
 
         txt_records = self.dns.get("TXT", [])
 
         for record in txt_records:
 
-            record = record.lower().strip('"')
+            record = record.strip('"')
 
-            if "v=spf1" in record:
+            if record.lower().startswith("v=spf1"):
 
-                return True
+                return record
 
-        return False
+        return None
 
-    def _has_dmarc(self):
+    def _get_dmarc_record(self):
         """
-        Checks whether a DMARC record exists.
+        Returns the DMARC record.
         """
 
         try:
 
             answers = dns.resolver.resolve(
+
                 f"_dmarc.{self.domain}",
+
                 "TXT"
+
             )
 
             for record in answers:
 
-                text = str(record).strip('"').lower()
+                text = str(record).strip('"')
 
-                if text.startswith("v=dmarc1"):
+                if text.lower().startswith("v=dmarc1"):
 
-                    return True
+                    return text
 
         except Exception:
+
             pass
 
-        return False
+        return None
 
     def _check_dkim(self):
         """
@@ -140,9 +182,7 @@ class EmailSecurityAnalyzer:
 
         return {
 
-            "enabled": None,
-
-            "selector": None,
+            "enabled": False,
 
             "selector": "Unknown"
 
@@ -262,14 +302,19 @@ class EmailSecurityAnalyzer:
         """
         Runs all email security checks.
         """
+        mx_records = self._get_mx_records()
+
+        spf_record = self._get_spf_record()
+
+        dmarc_record = self._get_dmarc_record()
 
         return success_response({
 
-            "mx": self._has_mx(),
+            "mx": mx_records,
 
-            "spf": self._has_spf(),
+            "spf": spf_record,
 
-            "dmarc": self._has_dmarc(),
+            "dmarc": dmarc_record,
 
             "dkim": self._check_dkim(),
 

@@ -30,6 +30,25 @@ NetInsight | Infrastructure Intelligence Platform
 
         </p>
 
+        {% if error %}
+
+        <div class="alert alert-danger alert-dismissible fade show mt-4" role="alert">
+
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+
+            {{ error }}
+
+            <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close">
+            </button>
+
+        </div>
+
+        {% endif %}
+
         <form
             action="/analyze"
             method="POST">

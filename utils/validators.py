@@ -1,9 +1,10 @@
 import re
+import dns.resolver
 
 
 def is_valid_domain(domain: str) -> bool:
     """
-    Validates a domain name.
+    Validates the syntax of a domain name.
     """
 
     pattern = (
@@ -13,3 +14,27 @@ def is_valid_domain(domain: str) -> bool:
     )
 
     return re.match(pattern, domain) is not None
+
+
+def domain_exists(domain: str) -> bool:
+    """
+    Checks whether the domain can be resolved via DNS.
+    """
+
+    try:
+
+        dns.resolver.resolve(domain, "A")
+
+        return True
+
+    except Exception:
+
+        try:
+
+            dns.resolver.resolve(domain, "AAAA")
+
+            return True
+
+        except Exception:
+
+            return False
